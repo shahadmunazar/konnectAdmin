@@ -1,0 +1,130 @@
+/* Additional styles that can't be added through the styles.js file */
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.left-buttons, .right-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-draft, .btn-menu {
+    background: #80cbc4;
+    border: none;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 4px;
+}
+
+.btn-back, .btn-next {
+    background: #4db6ac;
+    border: none;
+    color: white;
+    padding: 8px 20px;
+    border-radius: 4px;
+}
+
+.btn-draft:hover, .btn-menu:hover,
+.btn-back:hover, .btn-next:hover {
+    opacity: 0.9;
+}
+
+.btn-draft:disabled, .btn-menu:disabled,
+.btn-back:disabled, .btn-next:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Step indicator styles */
+.bg-primary {
+    background-color: #00a7b5 !important;
+}
+
+.bg-secondary {
+    background-color: #dee2e6 !important;
+}
+
+/* Form validation styles */
+.is-invalid {
+    border-color: #dc3545 !important;
+}
+
+.is-invalid:focus {
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+}
+
+/* Modal styles */
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    border: none;
+}
+
+/* DatePicker styles */
+.react-datepicker-wrapper {
+    display: block;
+}
+
+.react-datepicker__input-container input {
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.react-datepicker__input-container input:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* File upload styles */
+.custom-file-upload input[type="file"] {
+    display: block;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.custom-file-upload input[type="file"]:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Alert styles */
+.alert {
+    margin-bottom: 1rem;
+    padding: 1rem;
+    border-radius: 0.25rem;
+}
+
+.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+}
+
+.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+} 
