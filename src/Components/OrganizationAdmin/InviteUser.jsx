@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Layout from '../Layout/Layout';
 import { Modal, Button, Form } from 'react-bootstrap';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 
 function InviteUser() {
@@ -20,7 +21,7 @@ function InviteUser() {
                 return;
             }
 
-            const response = await fetch('http://localhost:5000/api/orginazation/get-all-invitation-link', {
+            const response = await fetch(`${BASE_URL}/api/orginazation/get-all-invitation-link`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                 },
@@ -52,7 +53,7 @@ function InviteUser() {
                 return;
             }
 
-            const response = await fetch('http://localhost:5000/api/orginazation/send-contract-invitation-link', {
+            const response = await fetch(`${BASE_URL}/api/orginazation/send-contract-invitation-link`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -101,7 +102,7 @@ function InviteUser() {
                 return;
             }
 
-            const response = await fetch('http://localhost:5000/api/orginazation/send-contract-invitation-link', {
+            const response = await fetch(`${BASE_URL}/api/orginazation/send-contract-invitation-link`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -8,6 +8,7 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 import Layout from "../Layout/Layout";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const AccountSettings = () => {
   const [activeSection, setActiveSection] = useState("profile");
@@ -52,7 +53,7 @@ const AccountSettings = () => {
     const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch("http://localhost:5000/api/superadmin/profile-update", {
+      const response = await fetch(`${BASE_URL}/api/superadmin/profile-update`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -84,7 +85,7 @@ const AccountSettings = () => {
     const updatedValue = !twoFAEnabled;
 
     try {
-      const response = await fetch("http://localhost:5000/api/superadmin/active-multi-factor", {
+      const response = await fetch(`${BASE_URL}/api/superadmin/active-multi-factor`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -130,7 +131,7 @@ const AccountSettings = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch("http://localhost:5000/api/superadmin/update-password-by-superadmin", {
+      const response = await fetch(`${BASE_URL}/api/superadmin/update-password-by-superadmin`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -176,7 +177,7 @@ const AccountSettings = () => {
     const fetchTwoFAStatus = async () => {
       const token = localStorage.getItem("token");
       try {
-        const response = await fetch("http://localhost:5000/api/superadmin/get-status-of-multifactor", {
+        const response = await fetch(`${BASE_URL}/api/superadmin/get-status-of-multifactor`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,

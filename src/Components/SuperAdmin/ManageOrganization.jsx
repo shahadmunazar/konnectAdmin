@@ -4,6 +4,7 @@ import OrganizationFilters from "./OrganizationFilters";
 import EnableDisableModal from "./EnableDisableModal";
 import Layout from "../Layout/Layout";
 import { Button } from "react-bootstrap";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ManageOrganization = () => {
   const [organizations, setOrganizations] = useState([]);
@@ -17,7 +18,7 @@ const ManageOrganization = () => {
 
   const fetchOrganizations = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/superadmin/managment-orginzation", {
+      const res = await fetch(`${BASE_URL}/api/superadmin/managment-orginzation`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

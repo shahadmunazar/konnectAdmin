@@ -248,6 +248,7 @@
 import React, { useState, useEffect } from "react";
 import { Table, Form, Modal, Button } from "react-bootstrap";
 import Layout from "../Layout/Layout";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const statusOptions = ["New", "In Progress", "Resolved", "Closed"];
 
@@ -263,7 +264,7 @@ const EnquiryManagement = () => {
     const fetchEnquiries = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:5000/api/superadmin/get-all-enquiry", {
+        const response = await fetch(`${BASE_URL}/api/superadmin/get-all-enquiry`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
@@ -315,7 +316,7 @@ const EnquiryManagement = () => {
       const token = localStorage.getItem("token");
   
       const response = await fetch(
-        `http://localhost:5000/api/superadmin/update-inquiry-by-id/${immediate}`,
+        `${BASE_URL}/api/superadmin/update-inquiry-by-id/${immediate}`,
         {
           method: "PUT",
           headers: {
@@ -368,7 +369,7 @@ const EnquiryManagement = () => {
       const token = localStorage.getItem("token");
   
       const response = await fetch(
-        `http://localhost:5000/api/superadmin/get-enquiry-by-id/${id}`,
+        `${BASE_URL}/api/superadmin/get-enquiry-by-id/${id}`,
         {
           method: "GET",
           headers: {

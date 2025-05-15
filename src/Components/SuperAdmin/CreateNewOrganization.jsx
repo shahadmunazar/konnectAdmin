@@ -30,13 +30,13 @@
 //     const fetchDropdowns = async () => {
 //       try {
 //         const [plansRes, industriesRes, rolesRes] = await Promise.all([
-//           fetch("http://localhost:5000/api/superadmin/plans", {
+//           fetch(`${BASE_URL}/api/superadmin/plans", {
 //             headers: { Authorization: `Bearer ${token}` },
 //           }),
-//           fetch("http://localhost:5000/api/superadmin/industries", {
+//           fetch(`${BASE_URL}/api/superadmin/industries", {
 //             headers: { Authorization: `Bearer ${token}` },
 //           }),
-//           fetch("http://localhost:5000/api/superadmin/all-roles", {
+//           fetch(`${BASE_URL}/api/superadmin/all-roles", {
 //             headers: { Authorization: `Bearer ${token}` },
 //           }),
 //         ]);
@@ -90,7 +90,7 @@
 //     form.append("role_id", formData.role);
 
 //     try {
-//       const response = await fetch("http://localhost:5000/api/superadmin/create-organization", {
+//       const response = await fetch(`${BASE_URL}/api/superadmin/create-organization", {
 //         method: "POST",
 //         headers: {
 //           Authorization: `Bearer ${token}`,
@@ -339,6 +339,7 @@
 // export default CreateOrganization;
 
 import React, { useEffect, useState } from "react";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const OrganizationForm = ({ mode = "create", initialData = null, handleBack }) => {
   const [formData, setFormData] = useState({
@@ -369,10 +370,10 @@ const OrganizationForm = ({ mode = "create", initialData = null, handleBack }) =
     const fetchDropdowns = async () => {
       try {
         const [plansRes, industriesRes, rolesRes] = await Promise.all([
-          fetch("http://localhost:5000/api/superadmin/plans", {
+          fetch(`${BASE_URL}/api/superadmin/plans`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          fetch("http://localhost:5000/api/superadmin/industries", {
+          fetch(`${BASE_URL}/api/superadmin/industries`, {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -442,8 +443,8 @@ const OrganizationForm = ({ mode = "create", initialData = null, handleBack }) =
 
     const endpoint =
       mode === "create"
-        ? "http://localhost:5000/api/superadmin/create-organization"
-        : `http://localhost:5000/api/superadmin/update-organization/${initialData?.id}`;
+        ? `${BASE_URL}/api/superadmin/create-organization`
+        : `${BASE_URL}/api/superadmin/update-organization/${initialData?.id}`;
 
     try {
       const response = await fetch(endpoint, {

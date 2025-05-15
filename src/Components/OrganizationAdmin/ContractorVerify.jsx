@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ContractorVerify = ({ email }) => {
   const [passcode, setPasscode] = useState("");
@@ -32,7 +33,7 @@ const ContractorVerify = ({ email }) => {
         return;
       }
 
-      const response = await fetch("http://localhost:5000/api/orginazation/verify-multifactor-authentication", {
+      const response = await fetch(`${BASE_URL}/api/orginazation/verify-multifactor-authentication`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

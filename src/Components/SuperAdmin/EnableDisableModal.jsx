@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, Button } from "react-bootstrap";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const EnableDisableModal = ({ org, show, onClose, onStatusChanged }) => {
   if (!org) return null;
@@ -10,7 +11,7 @@ const EnableDisableModal = ({ org, show, onClose, onStatusChanged }) => {
     const newStatus = org.status == true ? 0 : 1;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/superadmin/toggle-status-managment/${org.id}`, {
+      const response = await fetch(`${BASE_URL}/api/superadmin/toggle-status-managment/${org.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

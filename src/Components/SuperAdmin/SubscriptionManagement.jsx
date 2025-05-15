@@ -22,7 +22,7 @@
 //     const fetchPlans = async () => {
 //       try {
 //         const token = localStorage.getItem("token");
-//         const response = await fetch("http://localhost:5000/api/superadmin/plans", {
+//         const response = await fetch(`${BASE_URL}/api/superadmin/plans`, {
 //           headers: {
 //             Authorization: `Bearer ${token}`,
 //           },
@@ -298,6 +298,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Form, Modal } from "react-bootstrap";
 import Layout from "../Layout/Layout";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const SubscriptionManagement = () => {
   const [plans, setPlans] = useState([]);
@@ -333,7 +334,7 @@ const SubscriptionManagement = () => {
   const fetchPlans = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/superadmin/plans", {
+      const response = await fetch(`${BASE_URL}/api/superadmin/plans`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -430,7 +431,7 @@ const SubscriptionManagement = () => {
     try {
       const token = localStorage.getItem("token");
   
-      const response = await fetch(`http://localhost:5000/api/superadmin/toggle-plan-status/${planId}`, {
+      const response = await fetch(`${BASE_URL}/api/superadmin/toggle-plan-status/${planId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -490,7 +491,7 @@ const SubscriptionManagement = () => {
       };
 
       const response = await fetch(
-        `http://localhost:5000/api/superadmin/update-plans/${selectedPlan.original.id}`,
+        `${BASE_URL}/api/superadmin/update-plans/${selectedPlan.original.id}`,
         {
           method: "PUT",
           headers: {

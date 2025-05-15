@@ -184,6 +184,7 @@ import React, { useEffect, useState } from "react";
 import { Table, Button, Form, Modal } from "react-bootstrap";
 import Layout from "../Layout/Layout";
 import { CSVLink } from "react-csv";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ViewSubscribers = () => {
   const [subscribers, setSubscribers] = useState([]);
@@ -199,7 +200,7 @@ const ViewSubscribers = () => {
   const fetchSubscribers = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/superadmin/get-subscription-user-list", {
+      const response = await fetch(`${BASE_URL}/api/superadmin/get-subscription-user-list`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -282,7 +283,7 @@ const ViewSubscribers = () => {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        `http://localhost:5000/api/superadmin/get-subscriber-activity-logs?subscription_id=${subscriberId}`,
+        `${BASE_URL}/api/superadmin/get-subscriber-activity-logs?subscription_id=${subscriberId}`,
         {
           method: "GET",
           headers: {
@@ -345,7 +346,7 @@ const ViewSubscribers = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const response = await fetch("http://localhost:5000/api/superadmin/update-payment-status", {
+      const response = await fetch(`${BASE_URL}/api/superadmin/update-payment-status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

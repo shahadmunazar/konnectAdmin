@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
 import logo from "../../assets/logo.png";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const cardStyle = {
   background: '#fff',
@@ -89,7 +90,7 @@ function ContractorDetailList({ onStartNewForm }) {
   const fetchContractors = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/orginazation/check-contractor-register?contractor_invitation_id=${contractor_invitation_id}&t=${new Date().getTime()}`);
+      const res = await fetch(`${BASE_URL}/api/orginazation/check-contractor-register?contractor_invitation_id=${contractor_invitation_id}&t=${new Date().getTime()}`);
       const data = await res.json();
       if (data.status === 200 && Array.isArray(data.data)) {
         setContractors(data.data);
@@ -110,7 +111,7 @@ function ContractorDetailList({ onStartNewForm }) {
     if (!window.confirm("Are you sure you want to delete this contractor?")) return;
     
     try {
-      const res = await fetch('http://localhost:5000/api/orginazation/delete-contractor-records', {
+      const res = await fetch(`${BASE_URL}/api/orginazation/delete-contractor-records`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contractor_id: contractorId }),

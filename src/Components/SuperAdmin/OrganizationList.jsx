@@ -4,6 +4,7 @@ import CreateOrganization from "./CreateNewOrganization";
 import { Modal, Button } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const OrganizationList = () => {
   const [showForm, setShowForm] = useState(false);
@@ -12,7 +13,7 @@ const OrganizationList = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const fetchOrganizations = () => {
-    fetch("http://localhost:5000/api/superadmin/get-organization", {
+    fetch(`${BASE_URL}/api/superadmin/get-organization`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -58,7 +59,7 @@ const OrganizationList = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/superadmin/send-onboarding-email", {
+      const response = await fetch(`${BASE_URL}/api/superadmin/send-onboarding-email`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

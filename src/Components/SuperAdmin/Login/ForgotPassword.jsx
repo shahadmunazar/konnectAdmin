@@ -1,6 +1,7 @@
 // ForgotPassword.jsx
 import React, { useState } from "react";
 import axios from "axios";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -15,7 +16,7 @@ export default function ForgotPassword() {
     setLoading(true); // start loader
 
     axios
-      .post("http://localhost:5000/api/forget-password", { email }, { headers: { Accept: "application/json" } })
+      .post(`${BASE_URL}/api/forget-password`, { email }, { headers: { Accept: "application/json" } })
       .then((response) => {
         setMessage(response.data.message || "Password reset link sent to your email!");
       })

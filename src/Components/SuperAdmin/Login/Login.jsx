@@ -58,7 +58,7 @@
 
 //             localStorage.setItem("email", loginInput);
 
-//             const response = await axios.post("http://localhost:5000/api/login", payload, {
+//             const response = await axios.post(`${BASE_URL}/api/login`, payload, {
 //                 headers: { Accept: "application/json" },
 //             });
 
@@ -152,7 +152,7 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import logo from "../../../assets/KonnectBlack.png";
 import VerifyOtp from "./VerifyOtp";
 import ForgotPassword from "./ForgotPassword";
-const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function Login() {
     const navigate = useNavigate();
@@ -164,6 +164,8 @@ export default function Login() {
     const [errors, setErrors] = useState({});
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
+
+   
 
     const validate = () => {
         const newErrors = {};

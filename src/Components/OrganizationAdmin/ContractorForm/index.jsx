@@ -12,6 +12,7 @@ import { styles } from "./styles";
 import "./styles.css";
 import ContractorDetailList from "../ContractorDetailList";
 import { AiOutlineClose } from 'react-icons/ai';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // Validation rules for form fields
 const validationRules = {
@@ -303,7 +304,7 @@ const ContractorForm = () => {
             formDataToSend.append('employs_others', 'Yes');
 
             const token = localStorage.getItem('token');
-            const response = await fetch("http://localhost:5000/api/orginazation/upload-insurace-contractor", {
+            const response = await fetch(`${BASE_URL}/api/orginazation/upload-insurace-contractor`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -359,7 +360,7 @@ const ContractorForm = () => {
         setSuccess("");
         try {
             const token = localStorage.getItem('token');
-            const response = await fetch('http://localhost:5000/api/orginazation/create-registration-contractor', {
+            const response = await fetch(`${BASE_URL}/api/orginazation/create-registration-contractor`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -654,7 +655,7 @@ const ContractorForm = () => {
 
             console.log("Request body:", requestBody instanceof FormData ? Object.fromEntries(requestBody.entries()) : requestBody);
 
-            const response = await fetch(`http://localhost:5000${endpoints[currentStep]}`, {
+            const response = await fetch(`${BASE_URL}${endpoints[currentStep]}`, {
                 method: 'POST',
                 headers: headers,
                 body: headers['Content-Type'] === 'application/json' ? JSON.stringify(requestBody) : requestBody
