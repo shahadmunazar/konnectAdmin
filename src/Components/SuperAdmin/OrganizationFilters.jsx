@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const OrganizationFilters = ({ onFilter }) => {
   const [status, setStatus] = useState("");
@@ -11,7 +12,7 @@ const OrganizationFilters = ({ onFilter }) => {
   useEffect(() => {
     const fetchPlans = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/superadmin/plans", {
+        const res = await fetch(`${BASE_URL}/api/superadmin/plans`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
