@@ -165,7 +165,7 @@ export default function Login() {
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
 
-   
+   console.log("BASE_URL",BASE_URL);
 
     const validate = () => {
         const newErrors = {};
