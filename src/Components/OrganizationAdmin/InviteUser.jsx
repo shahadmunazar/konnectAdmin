@@ -102,7 +102,7 @@ const InviteUser = () => {
         fetchInvitations();
     }, []);
 
-    console.log("selectedForm:", selectedForm);
+    
 
     const tabList = ["Details", "Submission", "Revision History", "Comments"];
 
@@ -228,7 +228,7 @@ const InviteUser = () => {
                 aria-labelledby="review-modal"
             >
                 <Modal.Header closeButton>
-                    <Modal.Title id="review-modal">Review - Form #{selectedForm.id}</Modal.Title>
+                    <Modal.Title id="review-modal">Review - Form #{selectedForm?.id}</Modal.Title>
                 </Modal.Header>
 
                 <div className="modal-body-wrapper p-3" style={{
