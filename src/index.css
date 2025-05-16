@@ -49,10 +49,62 @@ button {
 button:hover {
   border-color: #646cff;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
+.nav-item {
+  list-style: none;
+  width: 100%;
+}
+
+.nav-link {
+  padding: 10px 16px;
+  color: black;
+  font-weight: 500;
+}
+.has-submenu .submenu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background-color: #66d2d0;
+  width: 100%;
+}
+
+.submenu li {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.submenu-link {
+  display: block;
+  padding: 12px 24px;
+  color: #222;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.submenu-link:hover {
+  /* background-color: #4dbdbb; */
+  color: white;
+     
+
+}
+.dropdown-arrow{
+  font-size: 20px;
+}
+
+.submenu-link.active {
+  background-color: #3aa7a5;
+  color: white;
+  font-weight: 600;
+   padding-bottom: 32px!important;
+}
+
+/* .submenu li:active {
+ padding: 20px 20px !important;
+} */
 
 @media (prefers-color-scheme: light) {
   :root {

@@ -1,24 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Form, Button, Row, Col, Modal } from "react-bootstrap";
 import Layout from '../Layout/Layout';
-import { Modal, Button, Form, Dropdown } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-function InviteUser() {
-    const navigate = useNavigate();
-    const tabs = [
-        'Home',
-        'Prequalification',
-        'Inductions',
-        'Compliance',
-        'Manage',
-        'Pending Documents',
-        'Reports',
-        'Admin'
-    ];
-
-    const [activeTab, setActiveTab] = useState('Prequalification');
+const InviteUser = () => {
+    const [formId, setFormId] = useState("");
+    const [formStatus, setFormStatus] = useState("");
+    const [contractorStatus, setContractorStatus] = useState("");
+    const [keyword, setKeyword] = useState('');
     const [invitations, setInvitations] = useState([]);
     const [error, setError] = useState('');
     const [showModal, setShowModal] = useState(false);
@@ -26,76 +16,21 @@ function InviteUser() {
     const [message, setMessage] = useState('You are invited to join as a Contractor Admin.');
     const [formError, setFormError] = useState('');
     const [formSuccess, setFormSuccess] = useState('');
+    const [activeTab, setActiveTab] = useState("Details");
+    const [selectedForm, setSelectedForm] = useState(null);
+    const [showReviewModal, setShowReviewModal] = useState(false);
 
-    const fetchInvitations = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                setError('Authentication token missing.');
-                return;
-            }
-
-            const response = await fetch(`${BASE_URL}/api/orginazation/get-all-invitation-link`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
-            });
-
-            const result = await response.json();
-
-            if (response.ok && result.status === 200) {
-                setInvitations(result.data);
-            } else {
-                throw new Error(result.message || 'Failed to fetch invitations.');
-            }
-        } catch (err) {
-            setError(err.message || 'Something went wrong.');
-            setInvitations([]);
-        }
+    const handleSearch = () => {
+        console.log("Search clicked with:", { formId, formStatus, contractorStatus, keyword });
+    };
+    const handleClear = () => {
+        setFormId("");
+        setFormStatus("");
+        setContractorStatus("");
+        setKeyword("");
     };
 
-    useEffect(() => {
-        fetchInvitations();
-    }, []);
-
-    const handleResend = async (email) => {
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                setFormError('Authentication token missing.');
-                return;
-            }
-
-            const response = await fetch(`${BASE_URL}/api/orginazation/send-contract-invitation-link`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({ email, isResend: true }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Failed to send invitation.');
-            }
-
-            setFormSuccess('Invitation sent successfully!');
-            setTimeout(() => setFormSuccess(''), 3000);
-            setShowModal(false);
-            setEmail('');
-            setMessage('You are invited to join as a Contractor Admin.');
-            fetchInvitations();
-        } catch (error) {
-            setFormError(error.message || 'Something went wrong.');
-        }
-    };
-
-    const validateEmail = (email) => {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
-    };
+    const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
     const handleInviteSubmit = async (e) => {
         e.preventDefault();
@@ -125,9 +60,7 @@ function InviteUser() {
 
             const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error(data.message || 'Failed to send invitation.');
-            }
+            if (!response.ok) throw new Error(data.message || 'Failed to send invitation.');
 
             setFormSuccess('Invitation sent successfully!');
             setTimeout(() => setFormSuccess(''), 3000);
@@ -140,121 +73,124 @@ function InviteUser() {
         }
     };
 
+    const fetchInvitations = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                setError('Authentication token missing.');
+                return;
+            }
+
+            const response = await fetch(`${BASE_URL}/api/orginazation/get-all-invitation-link`, {
+                headers: { 'Authorization': `Bearer ${token}` },
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.status === 200) {
+                setInvitations(result.data);
+            } else {
+                throw new Error(result.message || 'Failed to fetch invitations.');
+            }
+        } catch (err) {
+            setError(err.message || 'Something went wrong.');
+            setInvitations([]);
+        }
+    };
+
+    useEffect(() => {
+        fetchInvitations();
+    }, []);
+
+    console.log("selectedForm:", selectedForm);
+
+    const tabList = ["Details", "Submission", "Revision History", "Comments"];
+
     return (
         <Layout>
-            {/* Top Tab Bar with Dropdown */}
-            <div className="bg-dark py-2 mt-6">
-                <div className="d-flex justify-content-center flex-wrap gap-4">
-                    {tabs.map((tab) => {
-                        if (tab === 'Prequalification') {
-                            return (
-                                <Dropdown
-                                    key={tab}
-                                    onToggle={(isOpen) => {
-                                        if (isOpen) setActiveTab(tab);
-                                    }}
-                                >
-                                    <Dropdown.Toggle
-                                        className={`px-3 py-2 rounded fw-medium ${activeTab === tab ? 'bg-info text-dark' : 'text-light'}`}
-                                        variant="dark"
-                                        style={{
-                                            border: 'none',
-                                            cursor: 'pointer',
-                                            borderBottom: activeTab === tab ? '3px solid #0dcaf0' : '3px solid transparent',
-                                        }}
-                                        id="dropdown-basic"
-                                    >
-                                        {tab}
-                                    </Dropdown.Toggle>
+            <div className="container mt-6">
+                <h4 className='mb-2'>Manage Forms</h4>
+                <Row className="align-items-center mb-3">
+                    <Col md={2}>
+                        <Form.Select value={formId} onChange={(e) => setFormId(e.target.value)}>
+                            <option>Form ID</option>
+                            <option value="101">101</option>
+                            <option value="102">102</option>
+                        </Form.Select>
+                    </Col>
+                    <Col md={2}>
+                        <Form.Select value={formStatus} onChange={(e) => setFormStatus(e.target.value)}>
+                            <option>Form Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </Form.Select>
+                    </Col>
+                    <Col md={2}>
+                        <Form.Select value={contractorStatus} onChange={(e) => setContractorStatus(e.target.value)}>
+                            <option>Contractor Status</option>
+                            <option value="approved">Approved</option>
+                            <option value="pending">Pending</option>
+                        </Form.Select>
+                    </Col>
+                    <Col md={3}>
+                        <Form.Control
+                            placeholder="Enter keywords here"
+                            value={keyword}
+                            onChange={(e) => setKeyword(e.target.value)}
+                        />
+                    </Col>
+                    <Col md={3}>
+                        <Button variant="dark" className="me-2" onClick={handleSearch}>Search</Button>
+                        <Button variant="outline-dark" onClick={handleClear}>Clear</Button>
+                    </Col>
+                </Row>
 
-                                    <Dropdown.Menu>
-                                        <Dropdown.Item onClick={() => navigate('/manage-forms')}>Manage Forms</Dropdown.Item>
-                                        <Dropdown.Item onClick={() => setShowModal(true)}>Invite History</Dropdown.Item>
-                                    </Dropdown.Menu>
-                                </Dropdown>
+                <table className="table">
+                    <thead className="table-light">
+                        <tr>
+                            <th>Form #</th>
+                            <th>Contractor / Trading Name</th>
+                            <th>Email</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>State</th>
+                            <th>Form Status</th>
+                            <th>Created On</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {invitations?.map((item, idx) => (
+                            <tr
+                                key={idx}
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => {
+                                    setSelectedForm(item);
+                                    setShowReviewModal(true);
+                                }}
+                            >
+                                <td>{item.id}</td>
+                                <td>{item.contractor_name}</td>
+                                <td>{item.contractor_email}</td>
+                                <td>{item.contractor_name}</td>
+                                <td>{item.lastName}</td>
+                                <td>{item.state}</td>
+                                <td>{item.status}</td>
+                                <td>{new Date(item.createdAt).toLocaleDateString()}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
 
-                            );
-                        } else {
-                            return (
-                                <span
-                                    key={tab}
-                                    className={`px-3 py-2 rounded text-white fw-medium ${activeTab === tab ? 'bg-info text-dark' : 'text-light'
-                                        }`}
-                                    style={{
-                                        cursor: 'pointer',
-                                        transition: 'all 0.2s ease-in-out',
-                                        borderBottom: activeTab === tab ? '3px solid #0dcaf0' : '3px solid transparent',
-                                    }}
-                                    onClick={() => setActiveTab(tab)}
-                                >
-                                    {tab}
-                                </span>
-                            );
-                        }
-                    })}
+                <p className="text-muted mt-3">Displaying records 1 to {invitations?.length}</p>
+
+                <div className="d-flex gap-2 mt-3 flex-wrap">
+                    <button className="btn btn-primary" onClick={() => setShowModal(true)}>Single Invite</button>
+                    <button className="btn btn-primary">Bulk Invite</button>
+                    <button className="btn btn-primary">Request Completion</button>
+                    <button className="btn btn-primary">Answers Report</button>
+                    <button className="btn btn-primary">Templates</button>
+                    <button className="btn btn-primary">Bulk Updates</button>
                 </div>
-            </div>
-
-            {/* Page Content */}
-            <div className="container mt-4">
-                {activeTab === 'Prequalification' && (
-                    <>
-                        <h2>Contractor Admin Invitations</h2>
-                        <div className="mb-3 text-start">
-                            <button className="btn btn-primary" onClick={() => setShowModal(true)}>
-                                Invite Contractor Admin
-                            </button>
-                        </div>
-
-                        {error && <div className="alert alert-danger">{error}</div>}
-                        {formSuccess && <div className="alert alert-success">{formSuccess}</div>}
-
-                        <table className="table table-bordered mt-3">
-                            <thead className="thead-dark">
-                                <tr>
-                                    <th>Email</th>
-                                    <th>Invited By</th>
-                                    <th>Invited At</th>
-                                    <th>Status</th>
-                                    <th>Invitation Link</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {invitations.length === 0 ? (
-                                    <tr><td colSpan="6" className="text-center">No Invitations</td></tr>
-                                ) : (
-                                    invitations.map((invite, idx) => (
-                                        <tr key={idx}>
-                                            <td>{invite.contractor_email}</td>
-                                            <td>{invite.contractor_name || `User ID ${invite.invited_by}`}</td>
-                                            <td>{new Date(invite.sent_at).toLocaleString()}</td>
-                                            <td>{invite.status}</td>
-                                            <td>
-                                                <a
-                                                    href={`https://example.com/invite/${invite.invite_token}`}
-                                                    target="_blank"
-                                                    rel="noreferrer"
-                                                >
-                                                    Link
-                                                </a>
-                                            </td>
-                                            <td>
-                                                {invite.status === 'expired' ? (
-                                                    <button className="btn btn-sm btn-warning" onClick={() => handleResend(invite.contractor_email)}>
-                                                        Resend
-                                                    </button>
-                                                ) : (
-                                                    '-'
-                                                )}
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
-                    </>
-                )}
             </div>
 
             {/* Invite Modal */}
@@ -282,8 +218,89 @@ function InviteUser() {
                     </Form>
                 </Modal.Body>
             </Modal>
+
+            {/* Review Modal */}
+            <Modal
+                show={showReviewModal}
+                onHide={() => setShowReviewModal(false)}
+                size="xl"
+                dialogClassName="modal-90w"
+                aria-labelledby="review-modal"
+            >
+                <Modal.Header closeButton>
+                    <Modal.Title id="review-modal">Review - Form #{selectedForm.id}</Modal.Title>
+                </Modal.Header>
+
+                <div className="modal-body-wrapper p-3" style={{
+                    maxHeight: '75vh',
+                    overflowY: 'auto'
+                }}>
+                    {/* Tabs Header */}
+                    <div className="d-flex border-bottom mb-3 mt-3" style={{ gap: '1rem' }}>
+                        {tabList.map((tab) => (
+                            <div
+                                key={tab}
+                                className={`pb-2 px-3 cursor-pointer ${activeTab === tab ? 'border-bottom border-primary fw-bold text-primary' : 'text-muted'}`}
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => setActiveTab(tab)}
+                            >
+                                {tab}
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Tab Content */}
+                    <div className="tab-content p-3">
+                        {activeTab === "Details" && (
+                            <div>
+                                <p><strong>Form ID:</strong> {selectedForm?.id}</p>
+                                <p><strong>Status:</strong> {selectedForm?.status}</p>
+                                <p><strong>Created On:</strong> {new Date(selectedForm?.createdAt).toLocaleString()}</p>
+                            </div>
+                        )}
+
+                        {activeTab === "Submission" && (
+                            <div>
+                                <p><strong>Contractor Name:</strong> {selectedForm?.contractor_name}</p>
+                                <p><strong>Email:</strong> {selectedForm?.contractor_email}</p>
+                                <p><strong>Status:</strong> {selectedForm?.status}</p>
+                                <p><strong>Created On:</strong> {new Date(selectedForm?.createdAt).toLocaleString()}</p>
+                                <hr />
+                          
+                                <Form.Group className="mt-3">
+                                    <Form.Label>Rejection Comments</Form.Label>
+                                    <Form.Control as="textarea" rows={3} placeholder="Enter comments if rejecting..." />
+                                </Form.Group>
+                            </div>
+                        )}
+
+                        {activeTab === "Revision History" && (
+                            <p>No revision history available.</p>
+                        )}
+
+                        {activeTab === "Comments" && (
+                            <Form.Group>
+                                <Form.Label>Comments</Form.Label>
+                                <Form.Control as="textarea" rows={3} placeholder="Add your comments here..." />
+                            </Form.Group>
+                        )}
+                    </div>
+                </div>
+
+                <div className="d-flex justify-content-end mt-4 mb-3 flex-wrap px-4" style={{ gap: '0.5rem' }}>
+                    <Button variant="secondary">Change E-mail Address</Button>
+                    <Button variant="secondary">View Change History</Button>
+                    <Button variant="secondary">Export to PDF</Button>
+                    <Button variant="primary">Save</Button>
+                    <Button variant="warning">Pause</Button>
+                    <Button variant="success">Approve</Button>
+                    <Button variant="danger">Reject</Button>
+                    <Button variant="dark">Delete</Button>
+                    <Button variant="outline-secondary" onClick={() => setShowReviewModal(false)}>Close</Button>
+                </div>
+            </Modal>
         </Layout>
     );
-}
+};
 
 export default InviteUser;

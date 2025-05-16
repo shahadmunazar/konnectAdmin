@@ -17,6 +17,7 @@ import OrganizationDashboard from "./Components/OrganizationAdmin/OrganizationDa
 import InviteUser from "./Components/OrganizationAdmin/InviteUser";
 import ContractorPre from "./Components/OrganizationAdmin/ContractorPre";
 import ContractorDetailList from "./Components/OrganizationAdmin/ContractorDetailList";
+import InviteHistory from "./Components/OrganizationAdmin/InviteHistory";
 
 
 import { Routes, Route } from "react-router-dom";
@@ -64,6 +65,7 @@ function App() {
         <Route path="/contractor/register/:token" element={<ContractorPre />} />
         <Route path="/contractor/prequalification/:token" element={<ContractorForm/>} />
         <Route path="/contractor/prequalification/:token" element={<ContractorDetailList/>} />
+        <Route path="/invite-history" element={<InviteHistory/>} />
       </Routes>
     </div>
   );
