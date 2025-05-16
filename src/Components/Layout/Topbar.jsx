@@ -1,39 +1,51 @@
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import logo from "../../assets/logo.png";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function Topbar() {
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
 
-  const logoutSubmit = e => {
+  console.log("Token from localStorage:", token);
+
+  const logoutSubmit = async (e) => {
     e.preventDefault();
-    navigate("http://3.107.26.110:3000/user/login");
+    // navigate("/user/login");
 
-    axios.post(`/api/logout`).then(res => {
-      if (res.data.status === 200) {
-        localStorage.removeItem("auth_token");
-        localStorage.removeItem("auth_name");
-        localStorage.removeItem("auth_email");
-        // swal("Success",res.data.message,"success");
-        navigate("http://3.107.26.110:3000/user/login");
-      } else {
-        localStorage.removeItem("auth_token");
-        localStorage.removeItem("auth_name");
-        localStorage.removeItem("auth_email");
-        navigate("http://3.107.26.110:3000/user/login");
+    try {
+      if (token) {
+        const res = await axios.post(
+          `${BASE_URL}/api/superadmin/superadmin-logout`,
+          {}, // empty body
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        // ✅ Log success response
+        console.log("Logout success response:", res.data.status);
+        if (res.data.status == "200") {
+          localStorage.removeItem("token");
+          navigate("/user/login");
+        } else {
+          console.error("Logout failed:", res.data.message);
+        }
       }
-    });
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+
   };
 
-  const authToken = localStorage.getItem("auth_token");
-  const auth_name = localStorage.getItem("auth_name");
-  const auth_email = localStorage.getItem("auth_email");
+  useEffect(() => {
+    if (!token) {
+      navigate("/user/login");
+    }
+  }, [token, navigate]);
 
-  //   useEffect(() => {
-  //     if (!authToken) {
-  //       navigate("/");
-  //     }
-  //   }, [authToken, navigate]);
   return (
     <nav className="navbar">
       <a href="#" className="sidebar-toggler">
@@ -264,37 +276,37 @@ export default function Topbar() {
             <div className="dropdown-menu p-0" aria-labelledby="profileDropdown">
               <div className="d-flex flex-column align-items-center border-bottom px-5 py-3">
                 <div className="mb-3">
-                  <img className="wd-80 ht-80 rounded-circle" src="assets/images/faces/face1.jpg" alt="" />
+                  <img className="wd-80 ht-80 rounded-circle" src={logo} alt="" />
                 </div>
-                <div className="text-center">
+                {/* <div className="text-center">
                   <p className="tx-16 fw-bolder">{auth_name}</p>
                   <p className="tx-12 text-muted">{auth_email}</p>
-                </div>
+                </div> */}
               </div>
               <ul className="list-unstyled p-1">
-                {/* <li className="dropdown-item py-2">
+                <li className="dropdown-item py-2">
                   <a href="" className="text-body ms-0">
                     <i className="me-2 icon-md" data-feather="user"></i>
                     <span>Profile</span>
                   </a>
                 </li>
-                <li className="dropdown-item py-2">
+                {/* <li className="dropdown-item py-2">
                   <a href="" className="text-body ms-0">
                     <i className="me-2 icon-md" data-feather="edit"></i>
                     <span>Edit Profile</span>
                   </a>
-                </li> */}
-                {/* <li className="dropdown-item py-2">
+                </li>
+                <li className="dropdown-item py-2">
                   <a href="{() => false}" className="text-body ms-0">
                     <i className="me-2 icon-md" data-feather="repeat"></i>
                     <span>Switch User</span>
                   </a>
                 </li> */}
                 <li className="dropdown-item py-2 cursor-pointer text-center" onClick={logoutSubmit}>
-                  <a href="{() => false}" className="text-body ms-0">
-                    <i className="me-2 icon-md" data-feather="log-out"></i>
-                    {/* <span>Log Out</span> */}
-                  </a>
+
+                  <i className="me-2 icon-md" data-feather="log-out"></i>
+                  <span>Log Out</span>
+
                 </li>
               </ul>
             </div>
