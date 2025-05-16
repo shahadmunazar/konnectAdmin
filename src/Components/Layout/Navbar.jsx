@@ -266,7 +266,7 @@ export default function Navbar() {
               <li className="nav-item">
                 <NavLink to="/invite-user" className={navLinkClass}>
                   <Icon.Home className="link-icon" color="black" />
-                  <span className="link-title text-black" style={textStyle}>Invitation</span>
+                  <span className="link-title text-black" style={textStyle}>Prequalification</span>
                 </NavLink>
               </li>
             </ul>}

@@ -160,7 +160,7 @@ const AccountSettings = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/";
+    window.location.href = "http://3.107.26.110:3000/user/login";
   };
 
   useEffect(() => {

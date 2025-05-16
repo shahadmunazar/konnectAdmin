@@ -7,7 +7,7 @@ export default function Topbar() {
 
   const logoutSubmit = e => {
     e.preventDefault();
-    navigate("/");
+    navigate("http://3.107.26.110:3000/user/login");
 
     axios.post(`/api/logout`).then(res => {
       if (res.data.status === 200) {
@@ -15,12 +15,12 @@ export default function Topbar() {
         localStorage.removeItem("auth_name");
         localStorage.removeItem("auth_email");
         // swal("Success",res.data.message,"success");
-        navigate("/");
+        navigate("http://3.107.26.110:3000/user/login");
       } else {
         localStorage.removeItem("auth_token");
         localStorage.removeItem("auth_name");
         localStorage.removeItem("auth_email");
-        navigate("/");
+        navigate("http://3.107.26.110:3000/user/login");
       }
     });
   };
@@ -293,7 +293,7 @@ export default function Topbar() {
                 <li className="dropdown-item py-2 cursor-pointer text-center" onClick={logoutSubmit}>
                   <a href="{() => false}" className="text-body ms-0">
                     <i className="me-2 icon-md" data-feather="log-out"></i>
-                    <span>Log Out</span>
+                    {/* <span>Log Out</span> */}
                   </a>
                 </li>
               </ul>
