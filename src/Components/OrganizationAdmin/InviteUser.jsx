@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, Row, Col, Modal } from "react-bootstrap";
+import { Form, Button, Row, Col, Modal, Card } from "react-bootstrap";
 import Layout from '../Layout/Layout';
 import { useNavigate } from 'react-router-dom';
+import { FaFilePdf } from 'react-icons/fa'
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const InviteUser = () => {
@@ -17,12 +18,22 @@ const InviteUser = () => {
     const [formError, setFormError] = useState('');
     const [formSuccess, setFormSuccess] = useState('');
     const [activeTab, setActiveTab] = useState("Details");
-    const [selectedForm, setSelectedForm] = useState(null);
+    const [selectedForm, setSelectedForm] = useState([]);
     const [showReviewModal, setShowReviewModal] = useState(false);
+    const [showRejectModal, setShowRejectModal] = useState(false);
+    const [rejectionComments, setRejectionComments] = useState('');
+    const [showApproveModal, setShowApproveModal] = useState(false);
+    const [approvalType, setApprovalType] = useState("Full");
+    const [inclusionList, setInclusionList] = useState("Contractor Registration");
+    const [minHours, setMinHours] = useState("");
+    const [comments, setComments] = useState("");
+    const [bcc, setBcc] = useState("");
+    const [showInductionModal, setShowInductionModal] = useState(false);
 
     const handleSearch = () => {
         console.log("Search clicked with:", { formId, formStatus, contractorStatus, keyword });
     };
+
     const handleClear = () => {
         setFormId("");
         setFormStatus("");
@@ -81,7 +92,7 @@ const InviteUser = () => {
                 return;
             }
 
-            const response = await fetch(`${BASE_URL}/api/orginazation/get-all-invitation-link`, {
+            const response = await fetch(`${BASE_URL}/api/orginazation/get-all-submission-prequalification`, {
                 headers: { 'Authorization': `Bearer ${token}` },
             });
 
@@ -102,9 +113,157 @@ const InviteUser = () => {
         fetchInvitations();
     }, []);
 
-    
-
     const tabList = ["Details", "Submission", "Revision History", "Comments"];
+
+    const getDetails = async (id) => {
+        console.log("Fetching details for ID:#####", id);
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                setFormError('Authentication token missing.');
+                return;
+            }
+
+            const response = await fetch(`${BASE_URL}/api/orginazation/get-details-of-invitation?req_id=${id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+
+            const data = await response.json();
+            console.log("Details fetched:%%%%", data.data);
+            setSelectedForm(data?.data);
+        } catch (error) {
+            console.error("Error fetching details:", error);
+        }
+        setShowReviewModal(true);
+    }
+
+    const updateSubmissionStatus = async (reqId, comments) => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                setFormError('Authentication token missing.');
+                return;
+            }
+
+            console.log("Updating submission status for ID:", reqId);
+
+            const response = await fetch(`${BASE_URL}/api/orginazation/update-submission-status`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    req_id: reqId,
+                    submission_status: "rejected",
+                    comments: comments || "",
+                }),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                console.error(`${status} failed:`, error);
+                alert(`Failed to update status: ${status}`);
+                return false;
+            } else {
+                const data = await response.json();
+                console.log(`${status} successful:`, data);
+                alert(`Submission ${status} successfully.`);
+                return true;
+            }
+        } catch (error) {
+            console.error("API error:", error);
+            alert("An error occurred while updating submission status.");
+            return false;
+        }
+    };
+
+    const handleApprove = async (reqId) => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                setFormError('Authentication token missing.');
+                return;
+            }
+
+            console.log("Updating submission status for ID:", reqId);
+
+            const response = await fetch(`${BASE_URL}/api/orginazation/update-submission-status`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    req_id: reqId,
+                    submission_status: "approved",
+                    approval_type: approvalType,
+                    inclusion_list: inclusionList,
+                    minimum_hours: minHours,
+                    bcc_email: bcc,
+                    comments: comments
+                }),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                console.error(`${status} failed:`, error);
+                alert(`Failed to update status: ${status}`);
+                return false;
+            } else {
+                const data = await response.json();
+                console.log(`${status} successful:`, data);
+                alert(`Submission ${status} successfully.`);
+                return true;
+            }
+        } catch (error) {
+            console.error("API error:", error);
+            alert("An error occurred while updating submission status.");
+            return false;
+        }
+    };
+
+    const handleSend = async (reqId) => {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                setFormError('Authentication token missing.');
+                return;
+            }
+
+            const response = await fetch(`${BASE_URL}/api/orginazation/send-induction-email`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    "contractor_id": reqId,
+
+                }),
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                console.error(`${status} failed:`, error);
+                alert(`Failed to update status: ${status}`);
+                return false;
+            } else {
+                const data = await response.json();
+                console.log(`${status} successful:`, data);
+                alert(`Submission ${status} successfully.`);
+                return true;
+            }
+        } catch (error) {
+            console.error("API error:", error);
+            alert("An error occurred while updating submission status.");
+            return false;
+        }
+    };
 
     return (
         <Layout>
@@ -163,16 +322,13 @@ const InviteUser = () => {
                             <tr
                                 key={idx}
                                 style={{ cursor: 'pointer' }}
-                                onClick={() => {
-                                    setSelectedForm(item);
-                                    setShowReviewModal(true);
-                                }}
+                                onClick={() => getDetails(item.id)}
                             >
                                 <td>{item.id}</td>
-                                <td>{item.contractor_name}</td>
+                                <td>{item.contractor_trading_name}</td>
                                 <td>{item.contractor_email}</td>
-                                <td>{item.contractor_name}</td>
-                                <td>{item.lastName}</td>
+                                <td>{item.company_representative_first_name}</td>
+                                <td>{item.company_representative_last_name}</td>
                                 <td>{item.state}</td>
                                 <td>{item.status}</td>
                                 <td>{new Date(item.createdAt).toLocaleDateString()}</td>
@@ -252,25 +408,222 @@ const InviteUser = () => {
                     {/* Tab Content */}
                     <div className="tab-content p-3">
                         {activeTab === "Details" && (
-                            <div>
-                                <p><strong>Form ID:</strong> {selectedForm?.id}</p>
-                                <p><strong>Status:</strong> {selectedForm?.status}</p>
-                                <p><strong>Created On:</strong> {new Date(selectedForm?.createdAt).toLocaleString()}</p>
-                            </div>
+                            <Card className="shadow-sm border-0">
+
+                                <Row className="mb-2">
+                                    <Col sm={2} className="label">Form:</Col>
+                                    <Col sm={10} className="value">Contractor Pre-qualification Questionnaire</Col>
+                                </Row>
+                                <Row className="mb-2">
+                                    <Col sm={2} className="label">Company:</Col>
+                                    <Col sm={10} className="value">{selectedForm?.company_name}</Col>
+                                </Row>
+                                <Row className="mb-2">
+                                    <Col sm={2} className="label">Invited By:</Col>
+                                    <Col sm={10} className="value">{selectedForm?.invitedBy}</Col>
+                                </Row>
+                                <Row className="mb-2">
+                                    <Col sm={2} className="label">Name:</Col>
+                                    <Col sm={10} className="value">{selectedForm?.Name}</Col>
+                                </Row>
+                                <Row className="mb-2">
+                                    <Col sm={2} className="label">Email:</Col>
+                                    <Col sm={10} className="value">{selectedForm?.Email_Address}</Col>
+                                </Row>
+                                <Row className="mb-2">
+                                    <Col sm={2} className="label">Phone:</Col>
+                                    <Col sm={10} className="value">{selectedForm?.Phone_No}</Col>
+                                </Row>
+                                <Row className="mb-2">
+                                    <Col sm={2} className="label">Status:</Col>
+                                    <Col sm={10} className="value">{selectedForm?.Status}</Col>
+                                </Row>
+                                <Row className="mb-2">
+                                    <Col sm={2} className="label">Expires:</Col>
+                                    <Col sm={10} className="value">{selectedForm?.Expires}</Col>
+                                </Row>
+                                <Row className="mb-2">
+                                    <Col sm={2} className="label">Renewal:</Col>
+                                    <Col sm={10} className="value">{selectedForm?.Renewal}</Col>
+                                </Row>
+
+                            </Card>
                         )}
 
                         {activeTab === "Submission" && (
                             <div>
-                                <p><strong>Contractor Name:</strong> {selectedForm?.contractor_name}</p>
-                                <p><strong>Email:</strong> {selectedForm?.contractor_email}</p>
-                                <p><strong>Status:</strong> {selectedForm?.status}</p>
-                                <p><strong>Created On:</strong> {new Date(selectedForm?.createdAt).toLocaleString()}</p>
+                                <h5 className="mb-3">Company Details</h5>
+                                <Card className="shadow-sm border-0">
+                                    <Row className="mb-2">
+                                        <Col sm={4} className="label">ABN:</Col>
+                                        <Col sm={8} className="value">{selectedForm?.contractor_abn}</Col>
+                                    </Row>
+                                    <Row className="mb-2">
+                                        <Col sm={4} className="label">Company name:</Col>
+                                        <Col sm={8} className="value">{selectedForm?.company_name}</Col>
+                                    </Row>
+                                    <Row className="mb-2">
+                                        <Col sm={4} className="label">Trading name(s):</Col>
+                                        <Col sm={8} className="value">{selectedForm?.invitedBy}</Col>
+                                    </Row>
+                                    <Row className="mb-2">
+                                        <Col sm={4} className="label">Company structure:</Col>
+                                        <Col sm={8} className="value">{selectedForm?.company_structure}</Col>
+                                    </Row>
+                                    <Row className="mb-2">
+                                        <Col sm={4} className="label">Company representative first name:</Col>
+                                        <Col sm={8} className="value">{selectedForm?.company_representative_first_name}</Col>
+                                    </Row>
+                                    <Row className="mb-2">
+                                        <Col sm={4} className="label">Company representative last name:</Col>
+                                        <Col sm={8} className="value">{selectedForm?.company_representative_last_name}</Col>
+                                    </Row>
+                                    <Row className="mb-2">
+                                        <Col sm={4} className="label">Your position:</Col>
+                                        <Col sm={8} className="value">{selectedForm?.position_at_company}</Col>
+                                    </Row>
+                                    <Row className="mb-2">
+                                        <Col sm={4} className="label">Address:</Col>
+                                        <Col sm={8} className="value">{selectedForm?.address}</Col>
+                                    </Row>
+                                    <Row className="mb-2">
+                                        <Col sm={4} className="label">Street:</Col>
+                                        <Col sm={8} className="value">{selectedForm?.street}</Col>
+                                    </Row>
+                                    <Row className="mb-2">
+                                        <Col sm={4} className="label">suburb:</Col>
+                                        <Col sm={8} className="value">{selectedForm?.suburb}</Col>
+                                    </Row>
+                                    <Row className="mb-2">
+                                        <Col sm={4} className="label">state:</Col>
+                                        <Col sm={8} className="value">{selectedForm?.state}</Col>
+                                    </Row>
+                                    <Row className="mb-2">
+                                        <Col sm={4} className="label">Postcode:</Col>
+                                        <Col sm={8} className="value">{selectedForm?.postal_code}</Col>
+                                    </Row>
+                                    <Row className="mb-2">
+                                        <Col sm={4} className="label">Phone:</Col>
+                                        <Col sm={8} className="value">{selectedForm?.contractor_phone_number}</Col>
+                                    </Row>
+                                    <Row className="mb-2">
+                                        <Col sm={4} className="label">Services to be provided:</Col>
+                                        <Col sm={8} className="value">{selectedForm?.service_to_be_provided}</Col>
+                                    </Row>
+                                </Card>
                                 <hr />
-                          
-                                <Form.Group className="mt-3">
-                                    <Form.Label>Rejection Comments</Form.Label>
-                                    <Form.Control as="textarea" rows={3} placeholder="Enter comments if rejecting..." />
-                                </Form.Group>
+                                <h5 className="mb-3">Insurances </h5>
+                                <Card className="shadow-sm border-0">
+                                    <Row className="mb-3">
+                                        <Col sm={9} className="label">
+                                            Do you employ people other than independent contractors?:</Col>
+
+                                        <Col sm={3} className="value d-flex align-items-center">
+                                            {selectedForm?.InsuranceDoc_full_url ? (
+                                                <a href={selectedForm.InsuranceDoc_full_url} target="_blank" rel="noopener noreferrer" download>
+                                                    <FaFilePdf size={20} style={{ color: 'red', marginRight: '8px' }} />
+                                                    Download PDF
+                                                </a>
+                                            ) : (
+                                                'No'
+                                            )}
+                                        </Col>
+                                    </Row>
+                                    <Row className="mb-3">
+                                        <Col sm={9} className="label">
+                                            Please attach a copy of your Public Liability Insurance certificate of currency:</Col>
+
+                                        <Col sm={3} className="value d-flex align-items-center">
+                                            {selectedForm?.PublicLiability_doc_url ? (
+                                                <a href={selectedForm.PublicLiability_doc_url} target="_blank" rel="noopener noreferrer" download>
+                                                    <FaFilePdf size={20} style={{ color: 'red', marginRight: '8px' }} />
+                                                    Download PDF
+                                                </a>
+                                            ) : (
+                                                'No'
+                                            )}
+                                        </Col>
+
+                                    </Row>
+                                    <Row className="mb-3">
+                                        <Col sm={9} className="label">Enter the amount covered (numbers only) $:</Col>
+                                        <Col sm={3} className="value">{selectedForm?.covered_amount}</Col>
+                                    </Row>
+                                    <Row className="mb-3">
+                                        <Col sm={9} className="label">
+                                            Do you have Professional Indemnity Insurance?:</Col>
+                                        <Col sm={3} className="value">{selectedForm?.have_professional_indemnity_insurance}</Col>
+                                    </Row>
+                                </Card>
+                                <hr />
+                                <h5 className="mb-3">Work Health & Safety</h5>
+                                <Card className="shadow-sm border-0">
+                                    <Row className="mb-3">
+                                        <Col sm={9} className="label">
+                                            Does your organisation have a work health and safety management system in place?:</Col>
+                                        <Col sm={3} className="value">
+                                            {selectedForm?.SafetyManagement_doc_url ? (
+                                                <a
+                                                    href={selectedForm.SafetyManagement_doc_url}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    download
+                                                    className="d-flex align-items-center"
+                                                >
+                                                    <FaFilePdf size={18} style={{ color: 'red', marginRight: '8px' }} />
+                                                    Download File
+                                                </a>
+                                            ) : (
+                                                'No'
+                                            )}
+                                        </Col>
+                                    </Row>
+                                    <Row className="mb-3">
+                                        <Col sm={9} className="label">
+                                            Is a staff member nominated to be responsible for health and safety and supervision of health and safety activities? :</Col>
+                                        <Col sm={3} className="value">{selectedForm?.is_staff_member_nominated}</Col>
+                                    </Row>
+                                    <Row className="mb-3">
+                                        <Col sm={9} className="label">Are employees provided with health and safety induction and training into contractor safety arrangements?:</Col>
+                                        <Col sm={3} className="value">{selectedForm?.are_employees_provided_with_health_safety}</Col>
+                                    </Row>
+                                    <Row className="mb-3">
+                                        <Col sm={9} className="label">
+                                            Are employees appropriately licensed, qualified or certified where required?:</Col>
+                                        <Col sm={3} className="value">{selectedForm?.are_employees_appropriately_licensed_qualified_safety}</Col>
+                                    </Row>
+                                    <Row className="mb-3">
+                                        <Col sm={9} className="label">
+                                            Are employees confirmed as competent to undertake work?:</Col>
+                                        <Col sm={3} className="value">{selectedForm?.are_employees_confirmed_as_competent_to_undertake_work}</Col>
+                                    </Row>
+                                    <Row className="mb-3">
+                                        <Col sm={9} className="label">
+                                            Do you confirm all sub-contractors employed by you are competent and qualified to perform the work?:</Col>
+                                        <Col sm={3} className="value">{selectedForm?.do_you_all_sub_contractor_qualified_to_work}</Col>
+                                    </Row>
+                                    <Row className="mb-3">
+                                        <Col sm={9} className="label">
+                                            Have you identified all health and safety risks associated with the work to be undertaken, and eliminated or controlled those risks so far as is reasonably practicable and in accordance with relevant health and safety legislation?:</Col>
+                                        <Col sm={3} className="value">{selectedForm?.have_you_identified_all_health_safety_legislation}</Col>
+                                    </Row>
+                                    <Row className="mb-3">
+                                        <Col sm={9} className="label">
+                                            Do you have emergency response arrangements in place including trained first aiders?:</Col>
+                                        <Col sm={3} className="value">{selectedForm?.do_you_have_emergency_response}</Col>
+                                    </Row>
+                                    <Row className="mb-3">
+                                        <Col sm={9} className="label">
+                                            Do you have procedures to notify the applicable regulator in the event of a notifiable incident?:</Col>
+                                        <Col sm={3} className="value">{selectedForm?.do_you_have_procedures_to_notify_the_applicable}</Col>
+                                    </Row>
+                                    <Row className="mb-3">
+                                        <Col sm={9} className="label">
+                                            Do you have SWMS, JSAs or Safe Work Procedures for all tasks you will be carrying out?:</Col>
+                                        <Col sm={3} className="value">{selectedForm?.do_you_have_SWMS_JSAS_or_safe_work}</Col>
+                                    </Row>
+
+                                </Card>
                             </div>
                         )}
 
@@ -293,11 +646,161 @@ const InviteUser = () => {
                     <Button variant="secondary">Export to PDF</Button>
                     <Button variant="primary">Save</Button>
                     <Button variant="warning">Pause</Button>
-                    <Button variant="success">Approve</Button>
-                    <Button variant="danger">Reject</Button>
+                    {selectedForm?.submission_status == "approved" ? <Button variant="success" onClick={() => setShowInductionModal(true)}>Send Induction Invitation</Button> : <>   <Button variant="success" onClick={() => setShowApproveModal(true)}>Approve</Button>
+                        <Button variant="danger" onClick={() => setShowRejectModal(true)}>Reject</Button></>}
+
                     <Button variant="dark">Delete</Button>
                     <Button variant="outline-secondary" onClick={() => setShowReviewModal(false)}>Close</Button>
                 </div>
+                <Modal show={showRejectModal} onHide={() => setShowRejectModal(false)}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Reject Form #{selectedForm?.id}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form>
+                            <Form.Group className="mt-3">
+                                <Form.Label>Rejection Comments</Form.Label>
+                                <Form.Control
+                                    as="textarea"
+                                    rows={3}
+                                    placeholder="Enter comments if rejecting..."
+                                    value={rejectionComments}
+                                    onChange={(e) => setRejectionComments(e.target.value)}
+                                />
+                            </Form.Group>
+                        </Form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => setShowRejectModal(false)}>
+                            Cancel
+                        </Button>
+                        <Button
+                            variant="danger"
+                            onClick={() => updateSubmissionStatus(selectedForm?.id, rejectionComments)}
+                        >
+                            Submit Rejection
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+                <Modal show={showApproveModal} onHide={() => setShowApproveModal(false)} centered>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Approve Submission</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form>
+                            {/* Submitter */}
+                            <Form.Group as={Row} className="mb-3 align-items-center">
+                                <Form.Label column sm="4">Submitter</Form.Label>
+                                <Col sm="8">
+                                    <Form.Control type="text" value={selectedForm?.company_representative_first_name + " " + selectedForm?.company_representative_last_name} readOnly />
+                                </Col>
+                            </Form.Group>
+
+                            {/* Approval Type */}
+                            <Form.Group as={Row} className="mb-3 align-items-center">
+                                <Form.Label column sm="4">Approval Type</Form.Label>
+                                <Col sm="8">
+                                    <Form.Select value={approvalType} onChange={(e) => setApprovalType(e.target.value)}>
+                                        <option value="Full">Full</option>
+                                        <option value="Partial">Partial</option>
+                                    </Form.Select>
+                                </Col>
+                            </Form.Group>
+
+                            {/* Inclusion List */}
+                            <Form.Group as={Row} className="mb-3 align-items-center">
+                                <Form.Label column sm="4">Inclusion List</Form.Label>
+                                <Col sm="8">
+                                    <Form.Select value={inclusionList} onChange={(e) => setInclusionList(e.target.value)}>
+                                        <option>Contractor Registration</option>
+                                        <option>Health & Safety</option>
+                                        <option>Compliance</option>
+                                    </Form.Select>
+                                </Col>
+                            </Form.Group>
+
+                            {/* Minimum Hours */}
+                            <Form.Group as={Row} className="mb-3 align-items-center">
+                                <Form.Label column sm="4">Minimum Hours</Form.Label>
+                                <Col sm="8">
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="Ask"
+                                        value={minHours}
+                                        onChange={(e) => setMinHours(e.target.value)}
+                                    />
+                                </Col>
+                            </Form.Group>
+
+                            {/* Comments */}
+                            <Form.Group as={Row} className="mb-3">
+                                <Form.Label column sm="4">Comments</Form.Label>
+                                <Col sm="8">
+                                    <Form.Control
+                                        as="textarea"
+                                        rows={2}
+                                        placeholder="Any comments you enter here are for internal viewing only."
+                                        value={comments}
+                                        onChange={(e) => setComments(e.target.value)}
+                                    />
+                                </Col>
+                            </Form.Group>
+
+                            {/* BCC */}
+                            <Form.Group as={Row} className="mb-3 align-items-center">
+                                <Form.Label column sm="4">BCC</Form.Label>
+                                <Col sm="8">
+                                    <Form.Control
+                                        type="text"
+                                        placeholder=""
+                                        value={bcc}
+                                        onChange={(e) => setBcc(e.target.value)}
+                                    />
+                                </Col>
+                            </Form.Group>
+                        </Form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => setShowApproveModal(false)}>
+                            Cancel
+                        </Button>
+                        <Button variant="primary" onClick={() => handleApprove(selectedForm?.id)}>
+                            OK
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+                <Modal show={showInductionModal} onHide={() => setShowInductionModal(false)} centered>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Send Induction Link to Contractor </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form>
+
+
+                            {/* Inclusion List */}
+                            <Form.Group as={Row} className="mb-3 align-items-center">
+                                <Form.Label column sm="4">Course</Form.Label>
+                                <Col sm="8">
+                                    <Form.Select value={inclusionList} onChange={(e) => setInclusionList(e.target.value)}>
+                                        <option>Contractor Registration</option>
+                                        <option>Health & Safety</option>
+                                        <option>Compliance</option>
+                                    </Form.Select>
+                                </Col>
+                            </Form.Group>
+
+
+                        </Form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => setShowApproveModal(false)}>
+                            Cancel
+                        </Button>
+                        <Button variant="primary" onClick={() => handleSend(selectedForm?.id)}>
+                            Send Email
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
             </Modal>
         </Layout>
     );

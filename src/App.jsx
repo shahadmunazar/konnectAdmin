@@ -18,6 +18,9 @@ import InviteUser from "./Components/OrganizationAdmin/InviteUser";
 import ContractorPre from "./Components/OrganizationAdmin/ContractorPre";
 import ContractorDetailList from "./Components/OrganizationAdmin/ContractorDetailList";
 import InviteHistory from "./Components/OrganizationAdmin/InviteHistory";
+import InductionInfo from "./Components/OrganizationAdmin/ContractorRegistration/inductionInfo";
+import InductionsLogin from "./Components/OrganizationAdmin/ContractorRegistration/InductionsLogin";
+import InductionsRegister from "./Components/OrganizationAdmin/ContractorRegistration/InductionsRegister";
 
 
 import { Routes, Route } from "react-router-dom";
@@ -66,6 +69,9 @@ function App() {
         <Route path="/contractor/prequalification/:token" element={<ContractorForm/>} />
         <Route path="/contractor/prequalification/:token" element={<ContractorDetailList/>} />
         <Route path="/invite-history" element={<InviteHistory/>} />
+        <Route path="/induction-info/:token" element={<InductionInfo/>} />
+        <Route path="/inductions-login" element={<InductionsLogin/>} />
+        <Route path="/inductions-register" element={<InductionsRegister/>} />
       </Routes>
     </div>
   );
