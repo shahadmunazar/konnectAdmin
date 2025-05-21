@@ -18,7 +18,7 @@ import InviteUser from "./Components/OrganizationAdmin/InviteUser";
 import ContractorPre from "./Components/OrganizationAdmin/ContractorPre";
 import ContractorDetailList from "./Components/OrganizationAdmin/ContractorDetailList";
 import InviteHistory from "./Components/OrganizationAdmin/InviteHistory";
-import InductionInfo from "./Components/OrganizationAdmin/ContractorRegistration/inductionInfo";
+import InductionInfo from "./Components/OrganizationAdmin/ContractorRegistration/InductionInfo";
 import InductionsLogin from "./Components/OrganizationAdmin/ContractorRegistration/InductionsLogin";
 import InductionsRegister from "./Components/OrganizationAdmin/ContractorRegistration/InductionsRegister";
 
