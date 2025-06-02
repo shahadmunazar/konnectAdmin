@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import logo from '../../../assets/logo.png';
 import { useNavigate } from 'react-router-dom';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const InductionsLogin = () => {
     const [agreed, setAgreed] = useState(false);
@@ -9,16 +10,35 @@ const InductionsLogin = () => {
     const [otp, setOtp] = useState(new Array(6).fill(""));
     const navigate = useNavigate(); // Step 1: Setup navigation
 
-    const handleConfirm = () => {
-        // You can also validate the OTP here before redirecting
-        alert("OTP Confirmed!"); // For demonstration
-        navigate('/inductions-register'); // Step 2: Redirect to another page
+    const handleConfirm = async () => {
+        try {
+            const response = await fetch(`${BASE_URL}/api/orginazation/verify-mobile-and-email`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ otpcode: otp.join(''), userEmail: email }),
+            });
+            console.log("Response:", response); // Log the response for debugging
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            console.log("OTP verification response:", data); // Log the response for debugging
+            if (data.status == 200) {
+               
+                navigate('/inductions-register'); // Step 2: Redirect to another page
+            } else {
+                alert("Invalid OTP. Please try again.");
+            }
+        } catch (error) {
+            console.error("Error verifying OTP:", error);
+            alert("An error occurred while verifying the OTP. Please try again.");
+        }
+        // navigate('/inductions-register'); // Step 2: Redirect to another page
     };
 
-    const handleEmailSubmit = (e) => {
-        e.preventDefault();
-        setAgreed(true);
-    };
+    
 
     const handleOtpChange = (element, index) => {
         if (isNaN(element.value)) return;
@@ -31,6 +51,32 @@ const InductionsLogin = () => {
     };
 
     const clearOtp = () => setOtp(new Array(6).fill(""));
+
+    const SendOtp = async () => {
+        localStorage.setItem("email", email);
+        try {
+            const response = await fetch(`${BASE_URL}/api/orginazation/register-with-induction-contractor`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userEmail: email }),
+            });
+
+            console.log("Response:", response);
+            setAgreed(true);
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            console.log("OTP sent successfully:", data);
+
+        } catch (error) {
+            console.error("Error sending OTP:", error);
+        }
+    }
 
     return (
         <div style={{
@@ -125,7 +171,7 @@ const InductionsLogin = () => {
                         <div className="d-flex justify-content-center gap-3">
                             <Button variant="outline-secondary" onClick={() => setAgreed(false)}>Back</Button>
                             <Button variant="outline-danger" onClick={clearOtp}>Clear</Button>
-                            <Button style={{ backgroundColor: '#50bcbc', border: 'none' }}   onClick={handleConfirm}>Confirm</Button>
+                            <Button style={{ backgroundColor: '#50bcbc', border: 'none' }} onClick={handleConfirm}>Confirm</Button>
                         </div>
                     </div>
                 ) : (
@@ -138,7 +184,7 @@ const InductionsLogin = () => {
                         border: '1px solid #ddd',
                         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
                     }}>
-                        <Form onSubmit={handleEmailSubmit}>
+                        <Form >
                             <Form.Group controlId="email" className="mb-4">
                                 <Form.Label style={{
                                     color: '#007bff',
@@ -161,7 +207,7 @@ const InductionsLogin = () => {
                             </Form.Group>
                             <div className="text-end">
                                 <Button
-                                    type="submit"
+                               
                                     style={{
                                         backgroundColor: '#50bcbc',
                                         border: 'none',
@@ -169,6 +215,7 @@ const InductionsLogin = () => {
                                         fontSize: '15px',
                                         borderRadius: '6px'
                                     }}
+                                    onClick={SendOtp} // Call SendOtp function on button click
                                 >
                                     Next
                                 </Button>

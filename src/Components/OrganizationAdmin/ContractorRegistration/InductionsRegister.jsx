@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button, Row, Col, InputGroup } from 'react-bootstrap';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/bootstrap.css';
@@ -6,37 +6,115 @@ import { FaLock } from 'react-icons/fa';
 import logo from '../../../assets/logo.png';
 import { useNavigate } from 'react-router-dom';
 import PhotoUploadComponent from './PhotoUploadComponent';
+import PlaceSearch from '../ContractorForm/PlaceSearch';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const InductionsRegister = () => {
     const [mobile, setMobile] = useState('');
-    const emails = 'avdeshy213@gmail.com';
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [step, setStep] = useState(1);
     const [email, setEmail] = useState('');
     const [otp, setOtp] = useState(new Array(6).fill(""));
     const [mobiles, setMobiles] = useState('');
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [file, setFile] = useState(null);
-    const navigate = useNavigate(); // Step 1: Setup navigation
+    const [orgName, setOrgName] = useState('');
+    const [tradeType, setTradeType] = useState('');
+    const [password, setPassword] = useState('');
+    const [address, setAddress] = useState('');
+    const [country, setCountry] = useState('');
+    const [unit, setUnit] = useState('');
+    const [tradeTypes, setTradeTypes] = useState([]);
+    const [countrySearch, setCountrySearch] = useState("");
+    const [countryOptions, setCountryOptions] = useState([]);
+    const [selectedCountry, setSelectedCountry] = useState(null);
+    const [showOptions, setShowOptions] = useState(false);
+     const [photo, setPhoto] = useState(null);
+    const [errors, setErrors] = useState({});
+    const [selectedTradeTypeIds, setSelectedTradeTypeIds] = useState([]);
 
-    const handleConfirm = () => {
-        // You can also validate the OTP here before redirecting
-        alert("OTP Confirmed!"); // For demonstration
-        setStep(3); // Move to final form
+
+    const navigate = useNavigate();
+
+    const emails = localStorage.getItem('email');
+
+    console.log("address from address:", address?.fullAddress); // Log the email for debugging
+
+    const handleAddressSelect = (address) => {
+        setAddress(address);
+        setErrors((prev) => ({ ...prev, address: null })); // clear error if any
     };
 
-    const handleNext = () => {
+    const handleConfirm = async () => {
+        try {
+            const response = await fetch(`${BASE_URL}/api/orginazation/verify-mobile-and-email`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ otpcode: otp.join(''), mobile_no: mobile }),
+            });
+            console.log("Response:", response); // Log the response for debugging
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            console.log("OTP verification response:", data); // Log the response for debugging
+            if (data.status == 200) {
+                localStorage.setItem('VerificationId', data?.data?.id);
+                setStep(3); // Step 2: Redirect to another page
+            } else {
+                alert("Invalid OTP. Please try again.");
+            }
+        } catch (error) {
+            console.error("Error verifying OTP:", error);
+            alert("An error occurred while verifying the OTP. Please try again.");
+        }
+        // navigate('/inductions-register'); // Step 2: Redirect to another page
+    };
+
+    const handleNext = async () => {
         if (!mobile) {
             alert('Please enter mobile number.');
             return;
         }
 
+        localStorage.setItem('firstName', firstName);
+        localStorage.setItem('lastName', lastName);
+
+        try {
+            const response = await fetch(`${BASE_URL}/api/orginazation/register-with-induction-contractor`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    userEmail: emails,
+                    first_name: firstName,
+                    last_name: lastName,
+                    mobile_no: mobile
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            if (data.status == 200) {
+                setStep(2);
+            } else {
+                alert("Invalid OTP. Please try again.");
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
         // Simulate sending OTP logic here if needed
         console.log('Sending OTP to:', email, mobile);
-
         // Show OTP screen
-        setStep(2);
     };
-
 
     const handleOtpChange = (element, index) => {
         if (isNaN(element.value)) return;
@@ -53,6 +131,101 @@ const InductionsRegister = () => {
     };
 
     const clearOtp = () => setOtp(new Array(6).fill(""));
+
+    const handleSubmitFinal = async () => {
+        const newErrors = {};
+
+           const verificationId = localStorage.getItem('VerificationId');
+        if (!orgName) newErrors.orgName = 'Organization name is required';
+        if (!address) newErrors.address = 'Address is required';
+        if (!selectedTradeTypeIds) newErrors.selectedTradeTypeIds = 'Trade type is required';
+        if (!countryOptions) newErrors.countryOptions = 'Country is required';
+        if (!unit) newErrors.unit = 'Unit is required';
+        if (!password) newErrors.password = 'Password is required';
+        // if (!file) newErrors.file = 'Profile photo is required';
+         if (!photo) {
+            newErrors.photo = 'Photo is required';
+        }
+
+        setErrors(newErrors);
+
+        if (Object.keys(newErrors).length > 0) return;
+
+        const formData = new FormData();
+        formData.append('VerificationId', verificationId);
+        formData.append('userEmail', emails);
+        formData.append('first_name', firstName);
+        formData.append('last_name', lastName);
+        formData.append('mobile_no', mobiles);
+        formData.append('organization_name', orgName);
+        formData.append('address', address?.fullAddress);
+        formData.append('trade_Types', selectedTradeTypeIds);
+        formData.append('password', password);
+        formData.append('contractor_image', photo);
+        if (file) {
+            formData.append('profile_photo', file);
+        }
+
+        try {
+            const response = await fetch(`${BASE_URL}/api/orginazation/contractor-registration-uploading    `, {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            if (result.status == 200) {
+                
+                navigate('/inductions-credentials'); // Replace with your desired redirect
+            } else {
+                alert("Submission failed.");
+            }
+        } catch (error) {
+            console.error('Submission error:', error);
+            alert("An error occurred while submitting. Please try again.");
+        }
+    };
+
+
+    const GetTreadeType = async () => {
+        try {
+            const response = await fetch(`${BASE_URL}/api/orginazation/get-all-trade-types`);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            setTradeTypes(data.data || []);
+        } catch (error) {
+            console.error('Error fetching trade types:', error);
+        }
+    };
+
+
+
+    useEffect(() => {
+        GetTreadeType(); // Call the function
+
+    }, []);
+
+
+
+    useEffect(() => {
+        const delayDebounce = setTimeout(() => {
+            fetch(`${BASE_URL}/api/get-all-countrys?search=${countrySearch}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    if (data.success) {
+                        setCountryOptions(data.data);
+                    }
+                })
+                .catch((err) => console.error("Country fetch error:", err));
+        }, 300); // debounce input
+
+        return () => clearTimeout(delayDebounce);
+    }, [countrySearch]);
+
+
+
+    console.log("Trade Type Data:photo", photo); // Log the trade type data for debugging
 
     return (
         <>
@@ -94,21 +267,22 @@ const InductionsRegister = () => {
                     </div>
                     {/* Conditional Content */}
                     {step === 1 && (
-
                         <div className="d-flex justify-content-center align-items-center" style={{ backgroundColor: '#fff' }}>
                             <div style={{ maxWidth: '600px', width: '100%', padding: '30px' }}>
                                 <h5 style={{ marginBottom: '25px', fontWeight: '600' }}>Please enter your details</h5>
                                 <Form>
                                     <Form.Group className="mb-3">
-                                        <Form.Label style={{ fontSize: '14px' }}>First Name</Form.Label>
-                                        <Form.Control type="text" placeholder="please enter your first name" />
+                                        <Form.Label style={{ fontSize: '14px' }}>
+                                            First Name
+                                        </Form.Label>
+                                        <Form.Control type="text" placeholder="please enter your first name" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
                                     </Form.Group>
-
                                     <Form.Group className="mb-3">
-                                        <Form.Label style={{ fontSize: '14px' }}>Last Name</Form.Label>
-                                        <Form.Control type="text" placeholder="please enter your last name" />
+                                        <Form.Label style={{ fontSize: '14px' }}>
+                                            Last Name
+                                        </Form.Label>
+                                        <Form.Control type="text" placeholder="please enter your last name" value={lastName} onChange={(e) => setLastName(e.target.value)} />
                                     </Form.Group>
-
                                     <Form.Group className="mb-3">
                                         <Form.Label style={{ fontSize: '14px' }}>
                                             E-mail Address <FaLock style={{ color: '#777', marginLeft: '5px' }} />
@@ -180,7 +354,6 @@ const InductionsRegister = () => {
                                 (code expires in 30 minutes)
                             </p>
 
-
                             <div style={{
                                 backgroundColor: '#eaf4fd',
                                 padding: '10px 15px',
@@ -230,82 +403,186 @@ const InductionsRegister = () => {
                                 <Form>
                                     <Form.Group as={Row} className="mb-3">
                                         <Form.Label column sm={3}>First Name</Form.Label>
-                                        <Col sm={9}><Form.Control type="text" placeholder="First Name" /></Col>
+                                        <Col md={6}><Form.Label>First Name</Form.Label><Form.Control type="text" value={firstName} readOnly /></Col>
                                     </Form.Group>
 
                                     <Form.Group as={Row} className="mb-3">
                                         <Form.Label column sm={3}>Last Name</Form.Label>
-                                        <Col sm={9}><Form.Control type="text" placeholder="Last Name" /></Col>
+                                        <Col md={6}><Form.Label>Last Name</Form.Label><Form.Control type="text" value={lastName} readOnly /></Col>
                                     </Form.Group>
-
                                     <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm={3}>E-mail Address <FaLock style={{ color: '#777' }} /></Form.Label>
+                                        <Form.Label column sm={3}>E-mail Address <FaLock style={{ color: '#777' }} required /></Form.Label>
                                         <Col sm={9}><Form.Control type="email" value={emails} readOnly /></Col>
                                     </Form.Group>
 
                                     <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm={3}>Mobile</Form.Label>
+                                        <Form.Label column sm={3} >Mobile</Form.Label>
                                         <Col sm={9}><PhoneInput country={'in'} value={mobile} onChange={setMobiles} inputStyle={{ width: '100%' }} enableSearch /></Col>
                                     </Form.Group>
 
                                     <Form.Group as={Row} className="mb-3">
                                         <Form.Label column sm={3}>Organization Name</Form.Label>
-                                        <Col sm={9}><Form.Control type="text" placeholder="Organization Name" /></Col>
+                                        <Col sm={9}>
+                                            <Form.Control type="text" placeholder="Organization Name" value={orgName} onChange={(e) => setOrgName(e.target.value)} />
+                                            {errors.orgName && <small className="text-danger">{errors.orgName}</small>}
+                                        </Col>
+                                    </Form.Group>
+                                    <Form.Group controlId="formAddress" required >
+                                        <Row className="mb-2">
+                                            <Col md={3} className="mb-2">
+                                                <Form.Label>Address</Form.Label>
+                                            </Col>
+                                            <Col md={4}>
+                                                <div className="mb-3 position-relative">
+
+                                                    <input
+                                                        type="text"
+                                                        className="form-control"
+                                                        value={selectedCountry ? selectedCountry.name : countrySearch}
+                                                        placeholder="Search or Select Country"
+                                                        onChange={(e) => {
+                                                            setSelectedCountry(null);
+                                                            setCountrySearch(e.target.value);
+                                                            setShowOptions(true);
+                                                        }}
+                                                        onFocus={() => {
+                                                            setShowOptions(true);
+                                                        }}
+                                                        onBlur={() => {
+                                                            // Delay hiding to allow click selection
+                                                            setTimeout(() => setShowOptions(false), 150);
+                                                        }}
+                                                    />
+
+                                                    {showOptions && countryOptions.length > 0 && (
+                                                        <ul
+                                                            className="list-group position-absolute w-100 zindex-dropdown bg-white border"
+                                                            style={{ maxHeight: 200, overflowY: "auto" }}
+                                                        >
+                                                            {countryOptions.map((country) => (
+                                                                <li
+                                                                    key={country.id}
+                                                                    className="list-group-item list-group-item-action"
+                                                                    style={{ cursor: "pointer" }}
+                                                                    onMouseDown={() => {
+                                                                        setSelectedCountry(country);
+                                                                        setCountrySearch(country.name);
+                                                                        setShowOptions(false);
+                                                                    }}
+                                                                >
+                                                                    {country.name}
+                                                                </li>
+                                                            ))}
+                                                        </ul>
+                                                    )}
+                                                </div>
+
+
+                                                {errors.country && <small className="text-danger">{errors.country}</small>}
+                                            </Col>
+
+                                            <Col md={5}>
+                                                <Form.Control
+                                                    type="text"
+                                                    placeholder="Optional unit floor etc..."
+                                                    value={unit}
+                                                    onChange={(e) => setUnit(e.target.value)}
+                                                />
+                                                {errors.unit && <small className="text-danger">{errors.unit}</small>}
+                                            </Col>
+                                        </Row>
+
+                                        <Row className="mb-2">
+                                            <Col md={3} className="mb-2"> <Form.Label></Form.Label></Col>
+                                            <Col md={9}>
+                                                <PlaceSearch onAddressSelect={handleAddressSelect} type="induction" />
+                                            </Col>
+                                        </Row>
                                     </Form.Group>
 
                                     <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm={3}>Address</Form.Label>
+                                        <Form.Label column sm={3} >Trade Type</Form.Label>
                                         <Col sm={9}>
-                                            <InputGroup>
-                                                <Form.Select style={{ maxWidth: '180px' }}>
-                                                    <option>India</option>
-                                                    <option>USA</option>
-                                                    <option>UK</option>
-                                                </Form.Select>
-                                                <Form.Control placeholder="Street number, suburb etc." />
-                                            </InputGroup>
-                                        </Col>
-                                    </Form.Group>
-                                    {/* Searchable Location Input */}
-                                    <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm={3}></Form.Label>
-                                        <Col sm={9}>
-                                            <Form.Control type="text" placeholder="Search for location..." />
-                                        </Col>
-                                    </Form.Group>
-                                    <Form.Group as={Row} className="mb-3">
-                                        <Form.Label column sm={3}>Trade Type</Form.Label>
-                                        <Col sm={9}>
-                                            <Form.Select>
-                                                <option value="">Select Trade Type</option>
-                                                <option>Carpenter</option>
-                                                <option>Electrician</option>
-                                                <option>Plumber</option>
-                                                <option>Welder</option>
-                                                <option>Painter</option>
-                                                <option>Other</option>
-                                            </Form.Select>
-                                        </Col>
-                                    </Form.Group>
+                                            <div className="mb-3">
+                                                <select
+                                                    className="form-select"
+                                                    onChange={(e) => {
+                                                        const selectedId = parseInt(e.target.value);
+                                                        if (!selectedTradeTypeIds.includes(selectedId)) {
+                                                            setSelectedTradeTypeIds([...selectedTradeTypeIds, selectedId]);
+                                                        }
+                                                        e.target.value = ""; // reset dropdown
+                                                    }}
+                                                >
+                                                    <option value="">-- Select Trade Type --</option>
+                                                    {tradeTypes.map((type) => (
+                                                        <option key={type.id} value={type.id}>
+                                                            {type.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
 
-                                    <PhotoUploadComponent/>
-
+                                                {/* Display selected items with cross icons */}
+                                                <div className="mt-2 d-flex flex-wrap gap-2">
+                                                    {selectedTradeTypeIds.map((id) => {
+                                                        const trade = tradeTypes.find((t) => t.id === id);
+                                                        return (
+                                                            <span key={id} className="badge bg-primary d-flex align-items-center">
+                                                                {trade?.name}
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn-close btn-close-white btn-sm ms-2"
+                                                                    aria-label="Remove"
+                                                                    onClick={() =>
+                                                                        setSelectedTradeTypeIds(selectedTradeTypeIds.filter((i) => i !== id))
+                                                                    }
+                                                                ></button>
+                                                            </span>
+                                                        );
+                                                    })}
+                                                </div>
+                                            </div>
+                                            {errors.tradeType && <small className="text-danger">{errors.tradeType}</small>}
+                                        </Col>
+                                    </Form.Group>
+                                    <PhotoUploadComponent value={photo}
+                                        onChange={setPhoto}
+                                        error={errors.photo} />
                                     <Form.Group as={Row} className="mb-4">
                                         <Form.Label column sm={3}>Password</Form.Label>
                                         <Col sm={9}>
                                             <InputGroup>
-                                                <Form.Control type={passwordVisible ? 'text' : 'password'} placeholder="Enter a password" />
+                                                <Form.Control
+                                                    type={passwordVisible ? 'text' : 'password'}
+                                                    placeholder="Enter a password"
+                                                    value={password}
+                                                    onChange={(e) => setPassword(e.target.value)}
+                                                />
+                                                {errors.password && <small className="text-danger">{errors.password}</small>}
                                                 <Button variant="outline-secondary" onClick={() => setPasswordVisible(!passwordVisible)}>
                                                     {passwordVisible ? 'HIDE' : 'SHOW'}
                                                 </Button>
                                             </InputGroup>
                                         </Col>
                                     </Form.Group>
-
-                                    <div className="text-center mb-3">
-                                        <Button style={{ backgroundColor: '#50bcbc', border: 'none', padding: '8px 24px', borderRadius: '6px', fontWeight: '500' }}>
+                                    <div className="text-center mb-3 ">
+                                        <Button style={{ backgroundColor: '#50bcbc', border: 'none', padding: '8px 24px', borderRadius: '6px', fontWeight: '500' }} onClick={handleSubmitFinal}>
                                             Continue &rsaquo;
                                         </Button>
+                                         <div className="text-center mt-3">
+                                        <Button
+                                            variant="outline-info"
+                                            style={{
+                                                borderRadius: '6px',
+                                                backgroundColor: '#50bcbc',
+                                                color: '#fff',
+                                                fontWeight: '500',
+                                                padding: '8px 20px'
+                                            }}
+                                        >
+                                            Want to exit? Click here
+                                        </Button>
+                                    </div>
                                     </div>
                                 </Form>
                             </div>
@@ -313,7 +590,6 @@ const InductionsRegister = () => {
                     )}
                 </div>
             </div></>
-
     );
 };
 
