@@ -25,18 +25,13 @@ const ContractorPre = () => {
             setLoading(true);
 
             try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    setError("Authentication token missing.");
-                    setLoading(false);
-                    return;
-                }
+               
 
                 const response = await fetch(`${BASE_URL}/api/orginazation/send-multifactor-verification`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
+                      
                     },
                     body: JSON.stringify({ email }), // Sending payload
                 });

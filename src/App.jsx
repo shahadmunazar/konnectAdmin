@@ -22,6 +22,7 @@ import InductionInfo from "./Components/OrganizationAdmin/ContractorRegistration
 import InductionsLogin from "./Components/OrganizationAdmin/ContractorRegistration/InductionsLogin";
 import InductionsRegister from "./Components/OrganizationAdmin/ContractorRegistration/InductionsRegister";
 import InductionsCredentials from "./Components/OrganizationAdmin/ContractorRegistration/Induction/InductionsCredentials";
+import WelcomeStart from "./Components/OrganizationAdmin/ContractorRegistration/Induction/WelcomeStart";
 
 
 import { Routes, Route } from "react-router-dom";
@@ -74,6 +75,7 @@ function App() {
         <Route path="/inductions-login" element={<InductionsLogin/>} />
         <Route path="/inductions-register" element={<InductionsRegister/>} />
         <Route path="/inductions-credentials" element={<InductionsCredentials/>} />
+        <Route path="/inductions-start" element={<WelcomeStart/>} />
       </Routes>
     </div>
   );
