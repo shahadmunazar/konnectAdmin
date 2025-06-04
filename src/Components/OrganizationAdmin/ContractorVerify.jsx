@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Card, Form, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logoRR.png";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ContractorVerify = ({ email }) => {

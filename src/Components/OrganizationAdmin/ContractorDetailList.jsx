@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { AiOutlineClose } from 'react-icons/ai';
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logoRR.png";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const cardStyle = {

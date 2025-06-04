@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logoRR.png";
 import ContractorVerify from "./ContractorVerify";
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 

@@ -2030,7 +2030,7 @@ const credentialsList = [
 ];
 
 const InductionsCredentials = () => {
-    const [step, setStep] = useState(2);
+    const [step, setStep] = useState(0);
     const [credentials, setCredentials] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState({});
     const [formValues, setFormValues] = useState({});
