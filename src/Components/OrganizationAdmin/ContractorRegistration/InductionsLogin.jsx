@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect} from 'react';
 import { Button, Form } from 'react-bootstrap';
 import logo from '../../../assets/logoRR.png';
 import { useNavigate } from 'react-router-dom';
@@ -76,6 +76,10 @@ const InductionsLogin = () => {
         }
     }
 
+    useEffect(() => {   
+       localStorage.removeItem('step');
+    }, []);
+
     return (
         <div style={{
             backgroundColor: '#f0f4f8',
@@ -121,7 +125,7 @@ const InductionsLogin = () => {
                     <div className="p-4">
                         <h5 style={{ fontWeight: '600', marginBottom: '10px' }}>Let's get started!</h5>
                         <p style={{ fontSize: '16px', color: '#555', marginBottom: '10px', textAlign: "left" }}>
-                            To create your LinkSafe profile, we first need you to verify your email address.
+                            To create your Konnect profile, we first need you to verify your email address.
                         </p>
                         <p style={{ fontSize: '16px', color: '#555', marginBottom: '10px', textAlign: "left" }}>
                             We’ve sent a code to <strong>{email}</strong>.

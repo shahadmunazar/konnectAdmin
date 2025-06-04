@@ -55,7 +55,7 @@ const InductionInfo = () => {
                     <div className="p-4 text-center">
                         <h4 style={{ fontWeight: '500', marginBottom: '20px', textAlign: "left" }}>Registration Instructions</h4>
                         <p style={{ fontSize: '16px', color: '#555', marginBottom: '10px', textAlign: "left" }}>
-                            On the following page, you will be asked to register for a unique PIN that will allow you access into the James Milson Village Induction System.
+                            On the following page, you will be asked to register for a unique PIN that will allow you access into the Konnect Induction System.
                         </p>
                         <p style={{ fontSize: '16px', color: '#555', marginBottom: '30px', textAlign: "left" }}>
                             You will be required to enter this PIN to access each required course.

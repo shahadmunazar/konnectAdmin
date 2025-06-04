@@ -2400,7 +2400,7 @@ const InductionsCredentials = () => {
                                             <div>{values.issueDate || '-'}</div>
                                         </Col>
                                         <Col xs={4} className="text-center">
-                                            <FaFilePdf size={32} />
+                                            <FaFilePdf size={32} color='red'/>
                                         </Col>
                                     </Row>
                                     <Row>
@@ -2486,7 +2486,7 @@ const InductionsCredentials = () => {
             {/* Optional Credentials Section */}
             {selected.length > 0 && (
                 <>
-                    <h5 style={{ marginTop: 40, marginBottom: 20, color: '#666' }}>Optional Credentials</h5>
+                    <h5 style={{ marginTop: -15, marginBottom: 20, color: '#666' }}>Optional Credentials</h5>
                     {selected.map((credName, index) => {
                         const values = optionalFormValuesHistory[credName] || {};
                         const file = optionalUploadedFiles[credName];
@@ -2504,7 +2504,7 @@ const InductionsCredentials = () => {
                                             <div>{values.issueDate || '-'}</div>
                                         </Col>
                                         <Col xs={4} className="text-center">
-                                            <FaFilePdf size={32} />
+                                            <FaFilePdf size={32} color='red'/>
                                         </Col>
                                     </Row>
                                     <Row>

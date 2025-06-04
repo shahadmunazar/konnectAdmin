@@ -202,8 +202,8 @@ const InductionsRegister = () => {
 
 
     useEffect(() => {
+         localStorage.removeItem('step');
         GetTreadeType(); // Call the function
-
     }, []);
 
 
@@ -223,9 +223,9 @@ const InductionsRegister = () => {
         return () => clearTimeout(delayDebounce);
     }, [countrySearch]);
 
-
-
-    console.log("Trade Type Data:photo", photo); // Log the trade type data for debugging
+  const backHandle = () =>{
+    navigate('/inductions-login'); 
+  }
 
     return (
         <>
@@ -338,6 +338,7 @@ const InductionsRegister = () => {
                                                 fontWeight: '500',
                                                 padding: '8px 20px'
                                             }}
+                                            onClick={backHandle}
                                         >
                                             Want to exit? Click here
                                         </Button>
@@ -350,8 +351,8 @@ const InductionsRegister = () => {
                         <div className="p-4">
                             <h5 style={{ fontWeight: '600', marginBottom: '10px' }}>Enter Verification Code</h5>
                             <p style={{ fontSize: '16px', color: '#555', marginBottom: '10px', textAlign: "left" }}>
-                                A code has been sent to +91 63941 21571
-                                (code expires in 30 minutes)
+                                A code has been sent to <b>+{mobile}</b> (code expires in 30 minutes)
+                                              
                             </p>
 
                             <div style={{
@@ -362,7 +363,7 @@ const InductionsRegister = () => {
                                 fontSize: '14px',
                                 color: '#005b96'
                             }}>
-                                If you do not receive this email, please check your spam folder.
+                                If you do not receive this mobile, please check your sms folder.
                             </div>
 
                             {/* OTP Input Fields */}
@@ -390,7 +391,7 @@ const InductionsRegister = () => {
 
                             {/* Action Buttons */}
                             <div className="d-flex justify-content-center gap-3">
-                                <Button variant="outline-secondary" onClick={() => setAgreed(false)}>Back</Button>
+                                <Button variant="outline-secondary" onClick={() => setStep(1)}>Back</Button>
                                 <Button variant="outline-danger" onClick={clearOtp}>Clear</Button>
                                 <Button style={{ backgroundColor: '#50bcbc', border: 'none' }} onClick={handleConfirm}>Confirm</Button>
                             </div>
@@ -579,6 +580,7 @@ const InductionsRegister = () => {
                                                 fontWeight: '500',
                                                 padding: '8px 20px'
                                             }}
+                                            onClick={backHandle}
                                         >
                                             Want to exit? Click here
                                         </Button>
