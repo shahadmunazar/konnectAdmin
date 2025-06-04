@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import logo from '../../../assets/logo.png';
+import logo from '../../../assets/logoRR.png';
 import { useNavigate } from 'react-router-dom';
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -37,8 +37,6 @@ const InductionsLogin = () => {
         }
         // navigate('/inductions-register'); // Step 2: Redirect to another page
     };
-
-    
 
     const handleOtpChange = (element, index) => {
         if (isNaN(element.value)) return;
@@ -99,19 +97,19 @@ const InductionsLogin = () => {
                 <div style={{
                     display: 'flex',
                     alignItems: 'center',
-                    padding: '25px 30px',
+                    padding: '15px 30px',
                     borderBottom: '1px solid #eee',
                     backgroundColor: '#ffffff'
                 }}>
-                    <img src={logo} alt="Logo" style={{ height: '80px' }} />
+                    <img src={logo} alt="Logo" style={{ height: '70px' }} />
                 </div>
 
                 {/* Banner */}
                 <div style={{
                     backgroundColor: '#3a3a3a',
                     color: '#fff',
-                    padding: '14px 30px',
-                    fontSize: '18px',
+                    padding: '2px 30px',
+                    fontSize: '15px',
                     fontWeight: '600',
                     textAlign: 'left'
                 }}>

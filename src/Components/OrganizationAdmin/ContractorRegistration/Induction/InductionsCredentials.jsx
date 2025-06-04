@@ -2013,7 +2013,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Form, Button, Card, Row, Col } from 'react-bootstrap';
 import { FaCloudUploadAlt, FaQuestionCircle, FaFileUpload, FaFilePdf, FaCheckCircle } from 'react-icons/fa';
-import logo from '../../../../assets/logo.png';
+import logo from '../../../../assets/logoRR.png';
+import { useNavigate } from 'react-router-dom';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -2029,7 +2030,7 @@ const credentialsList = [
 ];
 
 const InductionsCredentials = () => {
-    const [step, setStep] = useState(0);
+    const [step, setStep] = useState(2);
     const [credentials, setCredentials] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState({});
     const [formValues, setFormValues] = useState({});
@@ -2043,7 +2044,7 @@ const InductionsCredentials = () => {
 
     const fileInputRef = useRef(null);
     const optionalFileInputRef = useRef(null);
-
+    const navigate = useNavigate();
     useEffect(() => {
         const handleBeforeUnload = (e) => {
             e.preventDefault();
@@ -2063,7 +2064,6 @@ const InductionsCredentials = () => {
         if (!isNaN(savedStep)) {
             setStep(savedStep);
         }
-
         GetAllTrade();
     }, []);
 
@@ -2128,6 +2128,45 @@ const InductionsCredentials = () => {
         formData.append('reference_number', values.reference || '');
         formData.append('trade_type_id', '2');
         formData.append('police_check', file);
+
+        try {
+            const response = await fetch('http://localhost:5000/api/orginazation/upload-contractor-documents', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to upload document');
+            }
+
+            const data = await response.json();
+            console.log('Upload successful:', data);
+
+            const updater = isOptional ? setOptionalUploadedFiles : setUploadedFiles;
+            const currentFiles = isOptional ? optionalUploadedFiles : uploadedFiles;
+            updater({
+                ...currentFiles,
+                [credentialName]: file,
+            });
+
+            return true;
+        } catch (error) {
+            console.error('Error uploading document:', error);
+            alert('Failed to upload document. Please try again.');
+            return false;
+        }
+    };
+
+    const uploadDocumentFinal = async (credentialName, isOptional = false) => {
+
+        console.log("isOptional", isOptional);
+        console.log("credentialName", credentialName);
+
+        const formData = new FormData();
+        formData.append('VerificationId', '1');
+        formData.append('confirmfinalSubmit', isOptional);
+        formData.append('document_type', credentialName);
+
 
         try {
             const response = await fetch('http://localhost:5000/api/orginazation/upload-contractor-documents', {
@@ -2378,9 +2417,27 @@ const InductionsCredentials = () => {
             )}
             <div className="mt-4">
                 <Button variant="secondary" onClick={() => handleBackStep()} style={{ marginRight: 10 }}>Back</Button>
-                <Button variant="success" onClick={() => setStep(credentials.length + 2)}>
+                {/* <Button variant="success" onClick={() => setStep(credentials.length + 2)}>
+                    Upload & Continue
+                </Button> */}
+                <Button
+                    variant="success"
+                    onClick={async () => {
+                        try {
+                            // Call your uploadDocument function first
+                            await uploadDocumentFinal('mandatory', true);
+
+                            // After successful upload, go to the next screen/step
+                            setStep(credentials.length + 2);
+                        } catch (error) {
+                            console.error("Upload failed:", error);
+                            alert("Failed to upload document. Please try again.");
+                        }
+                    }}
+                >
                     Upload & Continue
                 </Button>
+
             </div>
         </div>
     );
@@ -2390,7 +2447,7 @@ const InductionsCredentials = () => {
             <h4 style={{ marginBottom: 30, fontWeight: '600', color: '#4b4b4b' }}>Credential Summary</h4>
 
             {/* Mandatory Credentials Section */}
-            {credentials.length > 0 && (
+            {/* {credentials.length > 0 && (
                 <>
                     <h5 style={{ marginBottom: 20, color: '#666' }}>Mandatory Credentials</h5>
                     {credentials.map((cred) => {
@@ -2424,7 +2481,7 @@ const InductionsCredentials = () => {
                         );
                     })}
                 </>
-            )}
+            )} */}
 
             {/* Optional Credentials Section */}
             {selected.length > 0 && (
@@ -2467,22 +2524,32 @@ const InductionsCredentials = () => {
                 <Button variant="secondary" onClick={() => handleBackStep()} style={{ marginRight: 10 }}>Back</Button>
                 <Button
                     variant="success"
-                    onClick={() => {
-                        alert("Submission completed successfully!");
-                        // Reset the form and local storage
-                        setStep(0);
-                        setSelected([]);
-                        setOptionalStep(0);
-                        setFormValues({});
-                        setFormValuesHistory({});
-                        setUploadedFiles({});
-                        setOptionalFormValues({});
-                        setOptionalFormValuesHistory({});
-                        setOptionalUploadedFiles({});
-                        localStorage.removeItem('step');
+                    onClick={async () => {
+                        try {
+                            // Call your uploadDocument function first
+                            await uploadDocumentFinal('optional', true);
+
+                            // After successful upload, go to the next screen/step
+                            setStep(0);
+                            setSelected([]);
+                            setOptionalStep(0);
+                            setFormValues({});
+                            setFormValuesHistory({});
+                            setUploadedFiles({});
+                            setOptionalFormValues({});
+                            setOptionalFormValuesHistory({});
+                            setOptionalUploadedFiles({});
+                            localStorage.removeItem('step');
+                            // Navigate to the finish screen
+                            navigate('/inductions-start');
+                        } catch (error) {
+                            console.error("Upload failed:", error);
+                            alert("Failed to upload document. Please try again.");
+                        }
                     }}
+
                 >
-                    Finish
+                    Upload & Continue
                 </Button>
             </div>
         </div>
@@ -2511,8 +2578,8 @@ const InductionsCredentials = () => {
                 <Button
                     variant="link"
                     onClick={() => {
-                        // Skip optional uploads and go to the final Credential Summary
-                        setStep(credentials.length + 5);
+                        // Navigate to the finish screen
+                        navigate('/inductions-start');
                     }}
                 >
                     Skip
@@ -2577,7 +2644,7 @@ const InductionsCredentials = () => {
                         variant="primary"
                         onClick={() => handleNextStep(null, optionalStep, true)}
                     >
-                        {optionalStep + 1 < selected.length ? "Next" : "Finish"}
+                        {optionalStep + 1 < selected.length ? "Next" : "Continue"}
                     </Button>
                 </div>
             </div>
@@ -2607,10 +2674,10 @@ const InductionsCredentials = () => {
     return (
         <div style={{ backgroundColor: '#f0f4f8', display: 'flex', justifyContent: 'center', padding: '20px' }}>
             <div style={{ backgroundColor: '#fff', maxWidth: '800px', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)', width: '100%' }}>
-                <div style={{ padding: '25px 30px', borderBottom: '1px solid #eee' }}>
-                    <img src={logo} alt="Logo" style={{ height: '80px' }} />
+                <div style={{ padding: '15px 30px', borderBottom: '1px solid #eee', textAlign: "left" }}>
+                    <img src={logo} alt="Logo" style={{ height: '70px' }} />
                 </div>
-                <div style={{ backgroundColor: '#3a3a3a', color: '#fff', padding: '4px 30px', fontWeight: '600' }}>
+                <div style={{ backgroundColor: '#3a3a3a', color: '#fff', padding: '4px 30px', fontWeight: '600', textAlign: "left" }}>
                     Contractor Registration
                 </div>
 
@@ -2619,8 +2686,8 @@ const InductionsCredentials = () => {
                 {step === credentials.length + 1 && renderMandatoryReviewScreen()}
                 {step === credentials.length + 2 && renderOptionalScreen()}
                 {step === credentials.length + 3 && optionalStep < selected.length && renderOptionalUploadStep()}
-                {step === credentials.length + 4 && renderUploadAndReviewScreen()}
-                {step === credentials.length + 5 && renderReviewScreen()}
+                {step === credentials.length + 4 && renderReviewScreen()}
+                {/* {step === credentials.length + 5 &&  renderUploadAndReviewScreen()} */}
             </div>
         </div>
     );

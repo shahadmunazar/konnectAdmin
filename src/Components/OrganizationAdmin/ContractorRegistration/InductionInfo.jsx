@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
-import logo from '../../../assets/logo.png'; // Ensure correct path
+import logo from '../../../assets/logoRR.png'; // Ensure correct path
 
 
 const InductionInfo = () => {
@@ -17,7 +17,7 @@ const InductionInfo = () => {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            padding: '40px',
+            padding: '20px',
 
         }}>
             <div style={{
@@ -30,12 +30,12 @@ const InductionInfo = () => {
             }}>
                 {/* Logo */}
                 <div style={{
-                    padding: '20px 30px',
+                    padding: '15px 30px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'flex-start'
                 }}>
-                    <img src={logo} alt="James Milson Village" style={{ height: '90px' }} />
+                    <img src={logo} alt="James Milson Village" style={{ height: '70px' }} />
                 </div>
 
                 {/* Conditional View */}
@@ -43,9 +43,9 @@ const InductionInfo = () => {
                 <div style={{
                     backgroundColor: '#3a3a3a',
                     color: '#fff',
-                    padding: '12px 30px',
+                    padding: '2px 30px',
                     fontWeight: '600',
-                    fontSize: '16px',
+                    fontSize: '15px',
                     textAlign: 'left'
                 }}>
                     Contractor Registration

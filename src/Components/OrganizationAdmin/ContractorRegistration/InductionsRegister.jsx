@@ -3,7 +3,7 @@ import { Form, Button, Row, Col, InputGroup } from 'react-bootstrap';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/bootstrap.css';
 import { FaLock } from 'react-icons/fa';
-import logo from '../../../assets/logo.png';
+import logo from '../../../assets/logoRR.png';
 import { useNavigate } from 'react-router-dom';
 import PhotoUploadComponent from './PhotoUploadComponent';
 import PlaceSearch from '../ContractorForm/PlaceSearch';
@@ -248,18 +248,18 @@ const InductionsRegister = () => {
                     <div style={{
                         display: 'flex',
                         alignItems: 'center',
-                        padding: '25px 30px',
+                        padding: '15px 30px',
                         borderBottom: '1px solid #eee',
                         backgroundColor: '#ffffff'
                     }}>
-                        <img src={logo} alt="Logo" style={{ height: '80px' }} />
+                        <img src={logo} alt="Logo" style={{ height: '70px' }} />
                     </div>
                     {/* Banner */}
                     <div style={{
                         backgroundColor: '#3a3a3a',
                         color: '#fff',
-                        padding: '14px 30px',
-                        fontSize: '18px',
+                        padding: '2px 30px',
+                        fontSize: '15px',
                         fontWeight: '600',
                         textAlign: 'left'
                     }}>
