@@ -252,7 +252,7 @@ function ContractorDetailList({ onStartNewForm }) {
           <div className="cdl-title">
             Contractor Pre-qualification Questionnaire
           </div>
-          <img src={logo} alt="logo" style={{ height: 120, marginLeft: 16 }} />
+          <img src={logo} alt="logo" style={{ height: 70, marginLeft: 16 }} />
         </div>
         <div style={{ borderTop: '1px solid #e3e3e3', margin: '32px 32px 0 32px' }} />
         <div style={{ padding: '28px 48px 0 48px', textAlign: 'left' }}>

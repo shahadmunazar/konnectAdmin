@@ -10,7 +10,7 @@ const WelcomeStart = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-     const VerificationId = localStorage.getItem('VerificationId');
+    const VerificationId = localStorage.getItem('VerificationId');
 
     const handleFinish = async () => {
         setLoading(true);
@@ -19,7 +19,7 @@ const WelcomeStart = () => {
         try {
             const response = await axios.post(
                 `${BASE_URL}/api/orginazation/contractor-registration-uploading`,
-                { agree_terms: true ,VerificationId: VerificationId }, // Include any other necessary data
+                { agree_terms: true, VerificationId: VerificationId }, // Include any other necessary data
                 {
                     headers: {
                         'Content-Type': 'application/json',
@@ -30,7 +30,7 @@ const WelcomeStart = () => {
             );
 
             if (response.status === 200) {
-               window.location.href = 'http://3.27.123.86:3001/'; // ✅ Proper external redirect
+                window.location.href = 'http://3.27.123.86:3001/'; // ✅ Proper external redirect
             } else {
                 setError('Unexpected response. Please try again.');
             }

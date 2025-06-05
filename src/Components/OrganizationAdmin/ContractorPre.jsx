@@ -70,7 +70,7 @@ const ContractorPre = () => {
                                             src={logo}
                                             alt="Logo"
                                             className="img-fluid"
-                                            style={{ maxHeight: "90px", maxWidth: "220px" }}
+                                            style={{ maxHeight: "70px", maxWidth: "220px" }}
                                         />
                                     </Col>
                                 </Row>

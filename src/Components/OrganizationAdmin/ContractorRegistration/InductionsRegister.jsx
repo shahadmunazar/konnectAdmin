@@ -30,7 +30,7 @@ const InductionsRegister = () => {
     const [countryOptions, setCountryOptions] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState(null);
     const [showOptions, setShowOptions] = useState(false);
-     const [photo, setPhoto] = useState(null);
+    const [photo, setPhoto] = useState(null);
     const [errors, setErrors] = useState({});
     const [selectedTradeTypeIds, setSelectedTradeTypeIds] = useState([]);
 
@@ -135,7 +135,7 @@ const InductionsRegister = () => {
     const handleSubmitFinal = async () => {
         const newErrors = {};
 
-           const verificationId = localStorage.getItem('VerificationId');
+        const verificationId = localStorage.getItem('VerificationId');
         if (!orgName) newErrors.orgName = 'Organization name is required';
         if (!address) newErrors.address = 'Address is required';
         if (!selectedTradeTypeIds) newErrors.selectedTradeTypeIds = 'Trade type is required';
@@ -143,7 +143,7 @@ const InductionsRegister = () => {
         if (!unit) newErrors.unit = 'Unit is required';
         if (!password) newErrors.password = 'Password is required';
         // if (!file) newErrors.file = 'Profile photo is required';
-         if (!photo) {
+        if (!photo) {
             newErrors.photo = 'Photo is required';
         }
 
@@ -174,7 +174,7 @@ const InductionsRegister = () => {
 
             const result = await response.json();
             if (result.status == 200) {
-                
+
                 navigate('/inductions-credentials'); // Replace with your desired redirect
             } else {
                 alert("Submission failed.");
@@ -202,7 +202,7 @@ const InductionsRegister = () => {
 
 
     useEffect(() => {
-         localStorage.removeItem('step');
+        localStorage.removeItem('step');
         GetTreadeType(); // Call the function
     }, []);
 
@@ -223,9 +223,9 @@ const InductionsRegister = () => {
         return () => clearTimeout(delayDebounce);
     }, [countrySearch]);
 
-  const backHandle = () =>{
-    navigate('/inductions-login'); 
-  }
+    const backHandle = () => {
+        navigate('/inductions-login');
+    }
 
     return (
         <>
@@ -352,7 +352,7 @@ const InductionsRegister = () => {
                             <h5 style={{ fontWeight: '600', marginBottom: '10px' }}>Enter Verification Code</h5>
                             <p style={{ fontSize: '16px', color: '#555', marginBottom: '10px', textAlign: "left" }}>
                                 A code has been sent to <b>+{mobile}</b> (code expires in 30 minutes)
-                                              
+
                             </p>
 
                             <div style={{
@@ -570,21 +570,21 @@ const InductionsRegister = () => {
                                         <Button style={{ backgroundColor: '#50bcbc', border: 'none', padding: '8px 24px', borderRadius: '6px', fontWeight: '500' }} onClick={handleSubmitFinal}>
                                             Continue &rsaquo;
                                         </Button>
-                                         <div className="text-center mt-3">
-                                        <Button
-                                            variant="outline-info"
-                                            style={{
-                                                borderRadius: '6px',
-                                                backgroundColor: '#50bcbc',
-                                                color: '#fff',
-                                                fontWeight: '500',
-                                                padding: '8px 20px'
-                                            }}
-                                            onClick={backHandle}
-                                        >
-                                            Want to exit? Click here
-                                        </Button>
-                                    </div>
+                                        <div className="text-center mt-3">
+                                            <Button
+                                                variant="outline-info"
+                                                style={{
+                                                    borderRadius: '6px',
+                                                    backgroundColor: '#50bcbc',
+                                                    color: '#fff',
+                                                    fontWeight: '500',
+                                                    padding: '8px 20px'
+                                                }}
+                                                onClick={backHandle}
+                                            >
+                                                Want to exit? Click here
+                                            </Button>
+                                        </div>
                                     </div>
                                 </Form>
                             </div>

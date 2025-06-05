@@ -790,7 +790,7 @@ const ContractorForm = () => {
                                 src={logo}
                                 alt="Logo"
                                 className="img-fluid"
-                                style={{ maxHeight: "150px", maxWidth: "150px" }}
+                                style={{ maxHeight: "70px", maxWidth: "150px" }}
                             />
                         </Col>
                     </Row>

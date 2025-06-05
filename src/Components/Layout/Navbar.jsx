@@ -139,7 +139,9 @@ export default function Navbar() {
   const [isToggled, setIsToggled] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isSidebarFolded, setIsSidebarFolded] = useState(true); // Set default to true
-  const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
+  const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);    // Prequalification
+const [isInductionOpen, setIsInductionOpen] = useState(false);   // Induction
+
 
   const orgName = "superadmin";
   const handleToggle = () => {
@@ -258,59 +260,111 @@ export default function Navbar() {
                   </NavLink>
                 </li>
               </ul>
-            ) : <ul className="nav" style={{ backgroundColor: "#66d1d1" }}>
-              <li className="nav-item">
-                <NavLink to="/organization-dashboard" className={navLinkClass}>
-                  <Icon.Home className="link-icon" color="black" />
-                  <span className="link-title text-black" style={textStyle}>Dashboard</span>
-                </NavLink>
-              </li>
-              <li className="nav-item has-submenu">
-                <div
-                  className="nav-link "
-                  onClick={() => setIsSubmenuOpen(!isSubmenuOpen)}
-                  style={{
-                    cursor: "pointer",
-                    padding: "10px 16px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between"
-                  }}
-                >
-                  <div className="d-flex align-items-center">
-                    <Icon.Home className="link-icon me-2" color="black" />
-                    <span className="link-title text-black">Prequalification</span>
+            ) :
+              <ul className="nav" style={{ backgroundColor: "#66d1d1" }}>
+                {/* Dashboard */}
+                <li className="nav-item">
+                  <NavLink to="/organization-dashboard" className={navLinkClass}>
+                    <Icon.Home className="link-icon" color="black" />
+                    <span className="link-title text-black" style={textStyle}>Dashboard</span>
+                  </NavLink>
+                </li>
+
+                {/* Prequalification Dropdown */}
+                <li className="nav-item has-submenu">
+                  <div
+                    className="nav-link"
+                    onClick={() => setIsSubmenuOpen(!isSubmenuOpen)}
+                    style={{
+                      cursor: "pointer",
+                      padding: "10px 16px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between"
+                    }}
+                  >
+                    <div className="d-flex align-items-center">
+                      <Icon.File className="link-icon me-2" color="black" />
+                      <span className="link-title text-black">Prequalification</span>
+                    </div>
+                    <span className="dropdown-arrow">{isSubmenuOpen ? "▾" : "▸"}</span>
                   </div>
-                  <span className="dropdown-arrow">{isSubmenuOpen ? "▾" : "▸"}</span>
-                </div>
 
-                {isSubmenuOpen && (
-                  <ul className="submenu">
-                    <li>
-                      <NavLink
-                        to="/invite-user"
-                        className={({ isActive }) =>
-                          `submenu-link${isActive ? " active" : ""}`
-                        }
-                      >
-                        Manage Forms
-                      </NavLink>
-                    </li>
-                    <li>
-                      <NavLink
-                        to="/invite-history"
-                        className={({ isActive }) =>
-                          `submenu-link${isActive ? " active" : ""}`
-                        }
-                      >
-                        Invite History
-                      </NavLink>
-                    </li>
-                  </ul>
-                )}
-              </li>
+                  {isSubmenuOpen && (
+                    <ul className="submenu">
+                      <li>
+                        <NavLink
+                          to="/invite-user"
+                          className={({ isActive }) =>
+                            `submenu-link${isActive ? " active" : ""}`
+                          }
+                        >
+                          Manage Forms
+                        </NavLink>
+                      </li>
+                      <li>
+                        <NavLink
+                          to="/invite-history"
+                          className={({ isActive }) =>
+                            `submenu-link${isActive ? " active" : ""}`
+                          }
+                        >
+                          Invite History
+                        </NavLink>
+                      </li>
+                    </ul>
+                  )}
+                </li>
 
-            </ul>}
+                {/* Induction Dropdown */}
+                <li className="nav-item has-submenu">
+                  <div
+                    className="nav-link"
+                    onClick={() => setIsInductionOpen(!isInductionOpen)}
+                    style={{
+                      cursor: "pointer",
+                      padding: "10px 16px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between"
+                    }}
+                  >
+                    <div className="d-flex align-items-center">
+                      <Icon.BookOpen className="link-icon me-2" color="black" />
+                      <span className="link-title text-black">Induction</span>
+                    </div>
+                    <span className="dropdown-arrow">{isInductionOpen ? "▾" : "▸"}</span>
+                  </div>
+
+                  {isInductionOpen && (
+                    <ul className="submenu">
+                      <li>
+                        <NavLink
+                          to="/induction-search"
+                          className={({ isActive }) =>
+                            `submenu-link${isActive ? " active" : ""}`
+                          }
+                        >
+                          Induction Search
+                        </NavLink>
+                      </li>
+                      <li>
+                        <NavLink
+                          to="/inductions-link"
+                          className={({ isActive }) =>
+                            `submenu-link${isActive ? " active" : ""}`
+                          }
+                        >
+                          Induction Link
+                        </NavLink>
+                      </li>
+                    </ul>
+                  )}
+                </li>
+              </ul>
+
+
+            }
           </div>
         </PerfectScrollbar>
       </nav>

@@ -25,7 +25,7 @@ import InductionsCredentials from "./Components/OrganizationAdmin/ContractorRegi
 import WelcomeStart from "./Components/OrganizationAdmin/ContractorRegistration/Induction/WelcomeStart";
 import InductionsCoursePage from "./Components/OrganizationAdmin/ContractorRegistration/Induction/InductionsCoursePage";
 import FinishInduction from "./Components/OrganizationAdmin/ContractorRegistration/Induction/FinishInduction";
-
+import SendInduction from "./Components/OrganizationAdmin/OrgSendInduction/SendInduction";
 
 import { Routes, Route } from "react-router-dom";
 import ContractorForm from "./Components/OrganizationAdmin/ContractorForm/index";
@@ -74,12 +74,13 @@ function App() {
         <Route path="/contractor/prequalification/:token" element={<ContractorDetailList/>} />
         <Route path="/invite-history" element={<InviteHistory/>} />
         <Route path="/induction-info/:token" element={<InductionInfo/>} />
-        <Route path="/inductions-login" element={<InductionsLogin/>} />
+        <Route path="/inductions-login/:token" element={<InductionsLogin/>} />
         <Route path="/inductions-register" element={<InductionsRegister/>} />
         <Route path="/inductions-credentials" element={<InductionsCredentials/>} />
         <Route path="/inductions-start" element={<WelcomeStart/>} />
         <Route path="/inductions-course-page" element={<InductionsCoursePage/>} />
         <Route path="/inductions-finish" element={<FinishInduction/>} />
+        <Route path="/inductions-link" element={<SendInduction/>} />
       </Routes>
     </div>
   );

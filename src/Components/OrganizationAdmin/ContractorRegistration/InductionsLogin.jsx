@@ -17,7 +17,7 @@ const InductionsLogin = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ otpcode: otp.join(''), userEmail: email }),
+                body: JSON.stringify({ otpcode: otp.join(''), userEmail: email}),
             });
             console.log("Response:", response); // Log the response for debugging
             if (!response.ok) {
@@ -49,16 +49,18 @@ const InductionsLogin = () => {
     };
 
     const clearOtp = () => setOtp(new Array(6).fill(""));
+      const invited_by = localStorage.getItem('invited_by');
 
     const SendOtp = async () => {
         localStorage.setItem("email", email);
+      
         try {
             const response = await fetch(`${BASE_URL}/api/orginazation/register-with-induction-contractor`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ userEmail: email }),
+                body: JSON.stringify({ userEmail: email  , invite_by:invited_by,}),
             });
 
             console.log("Response:", response);
