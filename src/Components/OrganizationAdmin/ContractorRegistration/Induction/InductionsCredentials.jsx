@@ -2010,6 +2010,7 @@
 // };
 
 // export default InductionsCredentials;
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Form, Button, Card, Row, Col } from 'react-bootstrap';
 import { FaCloudUploadAlt, FaQuestionCircle, FaFileUpload, FaFilePdf, FaCheckCircle } from 'react-icons/fa';
@@ -2032,6 +2033,7 @@ const credentialsList = [
 const InductionsCredentials = () => {
     const [step, setStep] = useState(0);
     const [credentials, setCredentials] = useState([]);
+    const [credentialsoptional, setCredentialsoptional] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState({});
     const [formValues, setFormValues] = useState({});
     const [formValuesHistory, setFormValuesHistory] = useState({});
@@ -2069,8 +2071,14 @@ const InductionsCredentials = () => {
 
     useEffect(() => {
         localStorage.setItem('step', step);
+
     }, [step]);
 
+    // const toggleSelection = (item) => {
+    //     setSelected(prev =>
+    //         prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]
+    //     );
+    // };
     const toggleSelection = (item) => {
         setSelected(prev =>
             prev.includes(item) ? prev.filter(i => i !== item) : [...prev, item]
@@ -2084,6 +2092,7 @@ const InductionsCredentials = () => {
             if (!response.ok) throw new Error('Failed to fetch credentials');
             const data = await response.json();
             setCredentials(data?.data?.mandatory);
+            setCredentialsoptional(data?.data?.optional);
         } catch (error) {
             console.error('Error fetching credentials:', error);
         }
@@ -2115,7 +2124,58 @@ const InductionsCredentials = () => {
         });
     };
 
-    const uploadDocument = async (credentialName, isOptional = false) => {
+    // const uploadDocument = async (credentialName, id, isOptional = false) => {
+
+    //     console.log("%%%%%%%%%%%%****", credentialName, id)
+
+    //     const trade_type_id = localStorage.getItem('VerificationId');
+
+    //     if (!file) {
+    //         alert('Please select a file to upload.');
+    //         return false;
+    //     }
+
+    //     const values = isOptional ? optionalFormValues[credentialName] || {} : formValues[credentialName] || {};
+    //     const formData = new FormData();
+    //     formData.append('VerificationId', trade_type_id);
+    //     formData.append('issue_date', values.issueDate || '');
+    //     formData.append('reference_number', values.reference || '');
+    //     formData.append('trade_type_id', id);
+    //     formData.append('documentfileName', credentialName);
+    //     formData.append('police_check', file);
+
+    //     try {
+    //         const response = await fetch('http://localhost:5000/api/orginazation/upload-contractor-documents', {
+    //             method: 'POST',
+    //             body: formData,
+    //         });
+
+    //         if (!response.ok) {
+    //             throw new Error('Failed to upload document');
+    //         }
+
+    //         const data = await response.json();
+    //         console.log('Upload successful:', data);
+
+    //         const updater = isOptional ? setOptionalUploadedFiles : setUploadedFiles;
+    //         const currentFiles = isOptional ? optionalUploadedFiles : uploadedFiles;
+    //         updater({
+    //             ...currentFiles,
+    //             [credentialName]: file,
+    //         });
+
+    //         return true;
+    //     } catch (error) {
+    //         console.error('Error uploading document:', error);
+    //         alert('Failed to upload document. Please try again.');
+    //         return false;
+    //     }
+    // };
+
+
+    const uploadDocument = async (credentialName, id, isOptional = false) => {
+        const trade_type_id = localStorage.getItem('VerificationId');
+
         if (!file) {
             alert('Please select a file to upload.');
             return false;
@@ -2123,14 +2183,32 @@ const InductionsCredentials = () => {
 
         const values = isOptional ? optionalFormValues[credentialName] || {} : formValues[credentialName] || {};
         const formData = new FormData();
-        formData.append('VerificationId', '1');
+
+        // Common fields for both mandatory and optional
+        formData.append('VerificationId', trade_type_id);
         formData.append('issue_date', values.issueDate || '');
         formData.append('reference_number', values.reference || '');
-        formData.append('trade_type_id', '2');
+        formData.append('documentfileName', credentialName);
         formData.append('police_check', file);
 
+        // Handle the trade_type_id differently for optional credentials
+        if (isOptional) {
+            // For optional credentials, find the matching credential to get its ID
+            const optionalCredential = credentialsoptional.find(cred => cred.document_type === credentialName);
+            if (optionalCredential) {
+                formData.append('trade_type_id', optionalCredential.id);
+            } else {
+                console.error('Optional credential not found:', credentialName);
+                alert('Error: Credential configuration not found');
+                return false;
+            }
+        } else {
+            // For mandatory credentials, use the provided id directly
+            formData.append('trade_type_id', id);
+        }
+
         try {
-            const response = await fetch('http://localhost:5000/api/orginazation/upload-contractor-documents', {
+            const response = await fetch(`${BASE_URL}/api/orginazation/upload-contractor-documents`, {
                 method: 'POST',
                 body: formData,
             });
@@ -2157,13 +2235,15 @@ const InductionsCredentials = () => {
         }
     };
 
+
     const uploadDocumentFinal = async (credentialName, isOptional = false) => {
+        const trade_type_id = localStorage.getItem('VerificationId');
 
         console.log("isOptional", isOptional);
         console.log("credentialName", credentialName);
 
         const formData = new FormData();
-        formData.append('VerificationId', '1');
+        formData.append('VerificationId', trade_type_id);
         formData.append('confirmfinalSubmit', isOptional);
         formData.append('document_type', credentialName);
 
@@ -2197,8 +2277,21 @@ const InductionsCredentials = () => {
     };
 
     const handleNextStep = async (credential, index, isOptional = false) => {
-        const credentialName = isOptional ? selected[optionalStep] : credential.document_type;
-        const uploadSuccess = await uploadDocument(credentialName, isOptional);
+        // const credentialName = isOptional ? selected[optionalStep] : credential.document_type;
+        // const id = isOptional ? selected[optionalStep] : credential.id;
+        let credentialName, id;
+
+        if (isOptional) {
+            credentialName = selected[optionalStep];
+            // Find the optional credential to get its ID
+            const optionalCredential = credentialsoptional.find(cred => cred.document_type === credentialName);
+            id = optionalCredential?.id;
+        } else {
+            credentialName = credential.document_type;
+            id = credential.id;
+        }
+
+        const uploadSuccess = await uploadDocument(credentialName, id, isOptional);
 
         if (uploadSuccess) {
             if (isOptional && optionalFileInputRef.current) {
@@ -2400,7 +2493,7 @@ const InductionsCredentials = () => {
                                             <div>{values.issueDate || '-'}</div>
                                         </Col>
                                         <Col xs={4} className="text-center">
-                                            <FaFilePdf size={32} color='red'/>
+                                            <FaFilePdf size={32} color='red' />
                                         </Col>
                                     </Row>
                                     <Row>
@@ -2418,8 +2511,8 @@ const InductionsCredentials = () => {
             <div className="mt-4">
                 <Button variant="secondary" onClick={() => handleBackStep()} style={{ marginRight: 10 }}>Back</Button>
                 {/* <Button variant="success" onClick={() => setStep(credentials.length + 2)}>
-                    Upload & Continue
-                </Button> */}
+                        Upload & Continue
+                    </Button> */}
                 <Button
                     variant="success"
                     onClick={async () => {
@@ -2448,40 +2541,40 @@ const InductionsCredentials = () => {
 
             {/* Mandatory Credentials Section */}
             {/* {credentials.length > 0 && (
-                <>
-                    <h5 style={{ marginBottom: 20, color: '#666' }}>Mandatory Credentials</h5>
-                    {credentials.map((cred) => {
-                        const values = formValuesHistory[cred.document_type] || {};
-                        const file = uploadedFiles[cred.document_type];
-                        return (
-                            <Card key={cred.id} className="mb-3 text-start" style={{ borderRadius: 12 }}>
-                                <Card.Body>
-                                    <h6 style={{ fontWeight: 'bold', marginBottom: 10 }}>{cred.document_type}</h6>
-                                    <Row className="mb-2">
-                                        <Col xs={4}>
-                                            <div style={{ fontWeight: 500 }}>Reference</div>
-                                            <div>{values.reference || '-'}</div>
-                                        </Col>
-                                        <Col xs={4}>
-                                            <div style={{ fontWeight: 500 }}>Issue Date</div>
-                                            <div>{values.issueDate || '-'}</div>
-                                        </Col>
-                                        <Col xs={4} className="text-center">
-                                            <FaFilePdf size={32} />
-                                        </Col>
-                                    </Row>
-                                    <Row>
-                                        <Col xs={12}>
-                                            <div style={{ fontWeight: 500 }}>File</div>
-                                            <div>{file ? file.name : '-'}</div>
-                                        </Col>
-                                    </Row>
-                                </Card.Body>
-                            </Card>
-                        );
-                    })}
-                </>
-            )} */}
+                    <>
+                        <h5 style={{ marginBottom: 20, color: '#666' }}>Mandatory Credentials</h5>
+                        {credentials.map((cred) => {
+                            const values = formValuesHistory[cred.document_type] || {};
+                            const file = uploadedFiles[cred.document_type];
+                            return (
+                                <Card key={cred.id} className="mb-3 text-start" style={{ borderRadius: 12 }}>
+                                    <Card.Body>
+                                        <h6 style={{ fontWeight: 'bold', marginBottom: 10 }}>{cred.document_type}</h6>
+                                        <Row className="mb-2">
+                                            <Col xs={4}>
+                                                <div style={{ fontWeight: 500 }}>Reference</div>
+                                                <div>{values.reference || '-'}</div>
+                                            </Col>
+                                            <Col xs={4}>
+                                                <div style={{ fontWeight: 500 }}>Issue Date</div>
+                                                <div>{values.issueDate || '-'}</div>
+                                            </Col>
+                                            <Col xs={4} className="text-center">
+                                                <FaFilePdf size={32} />
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col xs={12}>
+                                                <div style={{ fontWeight: 500 }}>File</div>
+                                                <div>{file ? file.name : '-'}</div>
+                                            </Col>
+                                        </Row>
+                                    </Card.Body>
+                                </Card>
+                            );
+                        })}
+                    </>
+                )} */}
 
             {/* Optional Credentials Section */}
             {selected.length > 0 && (
@@ -2504,7 +2597,7 @@ const InductionsCredentials = () => {
                                             <div>{values.issueDate || '-'}</div>
                                         </Col>
                                         <Col xs={4} className="text-center">
-                                            <FaFilePdf size={32} color='red'/>
+                                            <FaFilePdf size={32} color='red' />
                                         </Col>
                                     </Row>
                                     <Row>
@@ -2562,19 +2655,24 @@ const InductionsCredentials = () => {
                 please click on the name of every credential that you are willing to supply and then click the 'Add Credentials' button.
             </div>
             <div className="credentials-grid">
-                {credentialsList.map((item, idx) => (
+                {credentialsoptional.map((item, idx) => (
                     <div
-                        key={idx}
-                        className={`credential-item ${selected.includes(item) ? 'selected' : ''}`}
-                        onClick={() => toggleSelection(item)}
+                        key={item.id}
+                        className={`credential-item ${selected.includes(item.document_type) ? 'selected' : ''}`}
+                        onClick={() => toggleSelection(item.document_type)}
                     >
                         <FaCheckCircle className="icon" />
-                        <span>{item}</span>
+                        <span>{item.document_type.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</span>
                     </div>
                 ))}
             </div>
             <div className="buttons mt-4">
-                <Button onClick={() => setStep(step + 1)} disabled={selected.length === 0}>Add {selected.length} Credentials</Button>
+                <Button
+                    onClick={() => setStep(step + 1)}
+                    disabled={selected.length === 0}
+                >
+                    Add {selected.length} Credentials
+                </Button>
                 <Button
                     variant="link"
                     onClick={() => {
