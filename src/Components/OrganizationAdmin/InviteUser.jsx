@@ -4,6 +4,7 @@ import Layout from '../Layout/Layout';
 import { useNavigate } from 'react-router-dom';
 import { FaFilePdf } from 'react-icons/fa'
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import Swal from 'sweetalert2';
 
 const InviteUser = () => {
     const [formId, setFormId] = useState("");
@@ -29,6 +30,7 @@ const InviteUser = () => {
     const [comments, setComments] = useState("");
     const [bcc, setBcc] = useState("");
     const [showInductionModal, setShowInductionModal] = useState(false);
+    const [thisId, setThisId] = useState("");
 
     const handleSearch = () => {
         console.log("Search clicked with:", { formId, formStatus, contractorStatus, keyword });
@@ -72,6 +74,14 @@ const InviteUser = () => {
             const data = await response.json();
 
             if (!response.ok) throw new Error(data.message || 'Failed to send invitation.');
+            // Show success SweetAlert
+            Swal.fire({
+                icon: 'success',
+                title: 'Success!',
+                text: 'Invitation sent successfully!',
+                timer: 3000,
+                showConfirmButton: false
+            });
 
             setFormSuccess('Invitation sent successfully!');
             setTimeout(() => setFormSuccess(''), 3000);
@@ -80,6 +90,12 @@ const InviteUser = () => {
             setMessage('You are invited to join as a Contractor Admin.');
             fetchInvitations();
         } catch (error) {
+            // Show error SweetAlert
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'Something went wrong.',
+            });
             setFormError(error.message || 'Something went wrong.');
         }
     };
@@ -116,8 +132,10 @@ const InviteUser = () => {
     const tabList = ["Details", "Submission", "Revision History", "Comments"];
 
     const getDetails = async (id) => {
+
         console.log("Fetching details for ID:#####", id);
         try {
+            setThisId(id)
             const token = localStorage.getItem('token');
             if (!token) {
                 setFormError('Authentication token missing.');
@@ -182,15 +200,73 @@ const InviteUser = () => {
         }
     };
 
+    // const handleApprove = async (reqId) => {
+    //     try {
+    //         const token = localStorage.getItem('token');
+    //         if (!token) {
+    //             setFormError('Authentication token missing.');
+    //             return;
+    //         }
+
+    //         console.log("Updating submission status for ID:", reqId);
+
+    //         const response = await fetch(`${BASE_URL}/api/orginazation/update-submission-status`, {
+    //             method: "PUT",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 Authorization: `Bearer ${token}`,
+    //             },
+    //             body: JSON.stringify({
+    //                 req_id: reqId,
+    //                 submission_status: "approved",
+    //                 approval_type: approvalType,
+    //                 inclusion_list: inclusionList,
+    //                 minimum_hours: minHours,
+    //                 bcc_email: bcc,
+    //                 comments: comments
+    //             }),
+    //         });
+
+    //         if (!response.ok) {
+
+    //             const error = await response.json();
+    //             Swal.fire({
+    //                 icon: 'error',
+    //                 title: 'Error',
+    //                 text: error.message || 'Failed to approve submission.',
+    //             });
+    //             return false;
+    //         } else {
+    //             const data = await response.json();
+    //             console.log(`${status} successful:`, data);
+    //             Swal.fire({
+    //                 icon: 'success',
+    //                 title: 'Success!',
+    //                 text: 'Submission approved successfully!',
+    //                 timer: 3000,
+    //                 showConfirmButton: false
+    //             });
+    //             getDetails();
+    //             setShowApproveModal(false)
+    //             return true;
+    //         }
+    //     } catch (error) {
+    //         console.error("API error:", error);
+    //         alert("An error occurred while updating submission status.");
+    //         return false;
+    //     }
+    // };
     const handleApprove = async (reqId) => {
         try {
             const token = localStorage.getItem('token');
             if (!token) {
-                setFormError('Authentication token missing.');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Authentication token missing.',
+                });
                 return;
             }
-
-            console.log("Updating submission status for ID:", reqId);
 
             const response = await fetch(`${BASE_URL}/api/orginazation/update-submission-status`, {
                 method: "PUT",
@@ -210,26 +286,38 @@ const InviteUser = () => {
             });
 
             if (!response.ok) {
-
                 const error = await response.json();
-                console.error(`${status} failed:`, error);
-                alert(`Failed to update status: ${status}`);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'Failed to approve submission.',
+                });
                 return false;
             } else {
-                const data = await response.json();
-                console.log(`${status} successful:`, data);
-                // alert(`Submission ${status} successfully.`);
-                setShowApproveModal(false)
-                setShowReviewModal(false);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Submission approved successfully!',
+                    timer: 3000,
+                    showConfirmButton: false
+                }).then(() => {
+                    // Fetch invitations again after the alert is closed
+                    getDetails(thisId);
+                });
+
+                setShowApproveModal(false);
+                // setShowReviewModal(false);
                 return true;
             }
         } catch (error) {
-            console.error("API error:", error);
-            alert("An error occurred while updating submission status.");
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'An error occurred while approving submission.',
+            });
             return false;
         }
     };
-
     const handleSend = async (reqId) => {
         try {
             const token = localStorage.getItem('token');
@@ -253,15 +341,23 @@ const InviteUser = () => {
             if (!response.ok) {
 
                 const error = await response.json();
-                console.error(`${status} failed:`, error);
-                alert(`Failed to update status: ${status}`);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: error.message || 'Failed to send induction.',
+                });
                 return false;
             } else {
                 setShowReviewModal(false)
                 setShowInductionModal(false)
                 const data = await response.json();
-                console.log(`${status} successful:`, data);
-                // alert(`Submission ${status} successfully.`);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'Send induction successfully!',
+                    timer: 3000,
+                    showConfirmButton: false
+                });
                 return true;
             }
         } catch (error) {
