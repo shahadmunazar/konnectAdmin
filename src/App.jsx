@@ -26,6 +26,7 @@ import WelcomeStart from "./Components/OrganizationAdmin/ContractorRegistration/
 import InductionsCoursePage from "./Components/OrganizationAdmin/ContractorRegistration/Induction/InductionsCoursePage";
 import FinishInduction from "./Components/OrganizationAdmin/ContractorRegistration/Induction/FinishInduction";
 import SendInduction from "./Components/OrganizationAdmin/OrgSendInduction/SendInduction";
+import InductionSearch from "./Components/OrganizationAdmin/OrgSendInduction/InductionSearch";
 
 import { Routes, Route } from "react-router-dom";
 import ContractorForm from "./Components/OrganizationAdmin/ContractorForm/index";
@@ -81,6 +82,7 @@ function App() {
         <Route path="/inductions-course-page" element={<InductionsCoursePage/>} />
         <Route path="/inductions-finish" element={<FinishInduction/>} />
         <Route path="/inductions-link" element={<SendInduction/>} />
+        <Route path="/inductions-search" element={<InductionSearch/>} />
       </Routes>
     </div>
   );

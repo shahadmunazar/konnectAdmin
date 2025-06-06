@@ -212,6 +212,45 @@ width: 105%!important;
 .logo {
   height: 60px;
 }
+.submenu-link {
+  display: block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.submenu-link:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+}
+.sidebar .nav-link,
+.sidebar .submenu-link {
+  display: flex;
+  align-items: center;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 10px 15px;
+  color: #000;
+  transition: background-color 0.2s;
+  border-radius: 6px;
+}
+
+.sidebar .nav-link:hover,
+.sidebar .submenu-link:hover {
+  background-color: rgba(0, 0, 0, 0.08);
+  color: #000;
+  text-decoration: none;
+}
+
+.sidebar .submenu {
+  padding-left: 20px;
+}
+
+.sidebar .submenu-link.text-white.bg-dark {
+  background-color: #000 !important;
+  color: #fff !important;
+}
 
 .sub-header {
   background-color: #3a3a3a;

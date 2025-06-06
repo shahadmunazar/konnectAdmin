@@ -210,6 +210,7 @@ const InviteUser = () => {
             });
 
             if (!response.ok) {
+
                 const error = await response.json();
                 console.error(`${status} failed:`, error);
                 alert(`Failed to update status: ${status}`);
@@ -217,7 +218,9 @@ const InviteUser = () => {
             } else {
                 const data = await response.json();
                 console.log(`${status} successful:`, data);
-                alert(`Submission ${status} successfully.`);
+                // alert(`Submission ${status} successfully.`);
+                setShowApproveModal(false)
+                setShowReviewModal(false);
                 return true;
             }
         } catch (error) {
@@ -248,14 +251,17 @@ const InviteUser = () => {
             });
 
             if (!response.ok) {
+
                 const error = await response.json();
                 console.error(`${status} failed:`, error);
                 alert(`Failed to update status: ${status}`);
                 return false;
             } else {
+                setShowReviewModal(false)
+                setShowInductionModal(false)
                 const data = await response.json();
                 console.log(`${status} successful:`, data);
-                alert(`Submission ${status} successfully.`);
+                // alert(`Submission ${status} successfully.`);
                 return true;
             }
         } catch (error) {
@@ -793,7 +799,7 @@ const InviteUser = () => {
                         </Form>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="secondary" onClick={() => setShowApproveModal(false)}>
+                        <Button variant="secondary" onClick={() => setShowInductionModal(false)}>
                             Cancel
                         </Button>
                         <Button variant="primary" onClick={() => handleSend(selectedForm?.id)}>

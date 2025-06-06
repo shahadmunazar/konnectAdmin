@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Form, Button, Modal } from 'react-bootstrap';
 import Select from 'react-select';
@@ -7,9 +8,9 @@ const SendInduction = () => {
   const [selectedOption, setSelectedOption] = useState('specific');
   const [selectedContractor, setSelectedContractor] = useState(null);
   const [email, setEmail] = useState('');
+  const [customEmails, setCustomEmails] = useState([]);
   const [additionalComments, setAdditionalComments] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [customEmails, setCustomEmails] = useState([]);
 
   const contractorOptions = [
     { value: 'abril', label: 'ABRIL RESTORATIONS PTY LTD', email: 'info@abril.com.au' },
@@ -20,10 +21,11 @@ const SendInduction = () => {
   const handleContractorChange = (selected) => {
     setSelectedContractor(selected);
     setEmail(selected.email);
+    setCustomEmails([selected.email]);
   };
 
   const handleOpenModal = () => {
-    setCustomEmails(email ? [email] : ['']);
+    setCustomEmails(email ? email.split(', ') : ['']);
     setShowModal(true);
   };
 
@@ -45,15 +47,19 @@ const SendInduction = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const recipients = selectedOption === 'specific' ? customEmails : ['ALL_CONTRACTORS'];
+
     console.log('Submitted Data:', {
       selectedOption,
-      selectedContractor,
-      email,
+      contractor: selectedContractor?.label,
+      emailRecipients: recipients,
       additionalComments,
     });
+
+    alert('Email sent to: ' + recipients.join(', '));
   };
 
-  // Custom styles for react-select to make it clean and aligned left
   const customSelectStyles = {
     control: (provided) => ({
       ...provided,
@@ -67,46 +73,28 @@ const SendInduction = () => {
       ...provided,
       fontSize: '14px',
     }),
-    singleValue: (provided) => ({
-      ...provided,
-      color: '#212529',
-    }),
-    placeholder: (provided) => ({
-      ...provided,
-      color: '#6c757d',
-    }),
   };
 
   return (
     <Layout>
-      <div
-        className="container mt-5 p-4 shadow-sm rounded bg-white"
-        style={{ maxWidth: '650px', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}
-      >
+      <div className="mt-5 p-4 rounded" style={{ maxWidth: '650px', fontFamily: "'Segoe UI', sans-serif" }}>
         <h4 className="mb-4 fw-bold text-primary">Send Email</h4>
         <Form onSubmit={handleSubmit}>
-
           <Form.Group className="mb-4 row align-items-center">
-            <Form.Label column sm={4} className="fw-semibold">
-              Select Course:
-            </Form.Label>
+            <Form.Label column sm={4} className="fw-semibold">Select Course:</Form.Label>
             <div className="col-sm-8">
-              <Form.Select aria-label="Select Course" className="shadow-sm">
+              <Form.Select>
                 <option>Contractor Registration</option>
               </Form.Select>
             </div>
           </Form.Group>
 
           <Form.Group className="mb-4 row align-items-center">
-            <Form.Label column sm={4} className="fw-semibold">
-              Select Option:
-            </Form.Label>
+            <Form.Label column sm={4} className="fw-semibold">Select Option:</Form.Label>
             <div className="col-sm-8">
               <Form.Select
                 value={selectedOption}
                 onChange={(e) => setSelectedOption(e.target.value)}
-                aria-label="Select Option"
-                className="shadow-sm"
               >
                 <option value="">Choose Option</option>
                 <option value="specific">I want to email a specific contractor</option>
@@ -118,9 +106,7 @@ const SendInduction = () => {
           {selectedOption === 'specific' && (
             <>
               <Form.Group className="mb-4 row align-items-center">
-                <Form.Label column sm={4} className="fw-semibold">
-                  Select Contractor:
-                </Form.Label>
+                <Form.Label column sm={4} className="fw-semibold">Select Contractor:</Form.Label>
                 <div className="col-sm-8">
                   <Select
                     options={contractorOptions}
@@ -129,27 +115,23 @@ const SendInduction = () => {
                     placeholder="Choose One"
                     isSearchable
                     styles={customSelectStyles}
-                    aria-label="Select Contractor"
                   />
                 </div>
               </Form.Group>
 
               <Form.Group className="mb-4 row align-items-center">
-                <Form.Label column sm={4} className="fw-semibold">
-                  Send to:
-                </Form.Label>
+                <Form.Label column sm={4} className="fw-semibold">Send to:</Form.Label>
                 <div className="col-sm-8">
                   <Form.Control
-                    type="email"
-                    value={email}
+                    type="text"
                     readOnly
+                    value={customEmails.join(', ')}
                     onClick={handleOpenModal}
                     style={{ cursor: 'pointer', backgroundColor: '#e9ecef' }}
-                    aria-label="Send to Email"
                     title="Click to override email addresses"
                   />
                   <Form.Text className="text-muted" style={{ fontSize: '0.85rem' }}>
-                    Click the email to override or add multiple email addresses
+                    Click to edit or add multiple email addresses
                   </Form.Text>
                 </div>
               </Form.Group>
@@ -157,9 +139,7 @@ const SendInduction = () => {
           )}
 
           <Form.Group className="mb-4 row align-items-start">
-            <Form.Label column sm={4} className="fw-semibold pt-0">
-              Additional Comments:
-            </Form.Label>
+            <Form.Label column sm={4} className="fw-semibold pt-0">Additional Comments:</Form.Label>
             <div className="col-sm-8">
               <Form.Control
                 as="textarea"
@@ -168,8 +148,6 @@ const SendInduction = () => {
                 placeholder="(This will appear in the body of the email)"
                 maxLength={500}
                 rows={4}
-                className="shadow-sm"
-                aria-label="Additional Comments"
               />
               <Form.Text muted className="text-end d-block" style={{ fontSize: '0.8rem' }}>
                 {additionalComments.length} / 500 characters
@@ -178,29 +156,25 @@ const SendInduction = () => {
           </Form.Group>
 
           <div className="text-start">
-            <Button type="submit" variant="primary" className="px-4 py-2 shadow-sm fw-semibold">
-              Send Emails
+            <Button
+              type="submit"
+              variant="primary"
+              className="px-4 py-2"
+              disabled={selectedOption === 'specific' && (!selectedContractor || customEmails.some(e => !e))}
+            >
+              Send Email
             </Button>
           </div>
 
-          <p className="mt-3 text-muted small fst-italic">
-            Note: You will receive a copy of emails.
-          </p>
+          <p className="mt-3 text-muted small fst-italic">Note: You will receive a copy of this email.</p>
         </Form>
 
-        {/* Email Override Modal */}
-        <Modal
-          show={showModal}
-          onHide={() => setShowModal(false)}
-          centered
-          size="md"
-          aria-labelledby="email-override-modal"
-        >
+        {/* Modal to manage emails */}
+        <Modal show={showModal} onHide={() => setShowModal(false)} centered>
           <Modal.Header closeButton>
-            <Modal.Title id="email-override-modal" className="fw-bold text-primary">
-              Override E-mail Addresses
-            </Modal.Title>
+            <Modal.Title className="fw-bold text-primary">Override Email Addresses</Modal.Title>
           </Modal.Header>
+
           <Modal.Body>
             <div className="d-flex justify-content-between align-items-center mb-3">
               <div className="fs-6 fw-semibold text-secondary">
@@ -211,43 +185,35 @@ const SendInduction = () => {
               </Button>
             </div>
             {customEmails.map((email, index) => (
-              <div key={index} className="d-flex align-items-center mb-2 gap-2">
+              <div key={index} className="d-flex mb-2 align-items-center gap-2">
                 <Form.Control
                   type="email"
                   value={email}
-                  placeholder="email@example.com"
                   onChange={(e) => handleCustomEmailChange(e.target.value, index)}
+                  placeholder="email@example.com"
                   isInvalid={email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)}
                 />
-                <Button
-                  variant="outline-danger"
-                  size="sm"
-                  onClick={() => handleRemoveRow(index)}
-                  aria-label={`Remove email ${index + 1}`}
-                >
-                  ✕
-                </Button>
+                {customEmails.length > 1 && (
+                  <Button variant="outline-danger" size="sm" onClick={() => handleRemoveRow(index)}>
+                    ✕
+                  </Button>
+                )}
               </div>
             ))}
+
           </Modal.Body>
           <Modal.Footer>
             <Button
               variant="primary"
               onClick={() => {
-                // Filter valid emails only and update main email with first valid email
                 const validEmails = customEmails.filter(
-                  (em) => em && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)
+                  (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)
                 );
-                if (validEmails.length) {
-                  setEmail(validEmails[0]);
-                } else {
-                  setEmail('');
-                }
+                setCustomEmails(validEmails);
+                setEmail(validEmails.join(', '));
                 setShowModal(false);
               }}
-              disabled={customEmails.some(
-                (em) => em && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)
-              )}
+              disabled={customEmails.some(e => e && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e))}
             >
               OK
             </Button>

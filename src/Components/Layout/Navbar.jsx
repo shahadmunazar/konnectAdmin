@@ -128,9 +128,8 @@
 //     </div>
 //   );
 // }
-
 import React, { useState, useEffect } from "react";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import * as Icon from "react-feather";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import "react-perfect-scrollbar/dist/css/styles.css";
@@ -138,32 +137,28 @@ import "react-perfect-scrollbar/dist/css/styles.css";
 export default function Navbar() {
   const [isToggled, setIsToggled] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [isSidebarFolded, setIsSidebarFolded] = useState(true); // Set default to true
-  const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);    // Prequalification
-const [isInductionOpen, setIsInductionOpen] = useState(false);   // Induction
-
+  const [isSidebarFolded, setIsSidebarFolded] = useState(true);
+  const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
+  const [isInductionOpen, setIsInductionOpen] = useState(false);
 
   const orgName = "superadmin";
+
   const handleToggle = () => {
     setIsToggled(!isToggled);
     document.body.classList.toggle("sidebar-folded", !isSidebarFolded);
-    setIsSidebarFolded(!isSidebarFolded); // Toggle state for proper class control
+    setIsSidebarFolded(!isSidebarFolded);
   };
 
   const getRole = localStorage.getItem("role");
-  console.log("Role:", getRole);
 
   useEffect(() => {
-    const body = document.body;
     const sidebarFolded = "sidebar-folded";
-    // Check if the sidebar is folded when the component mounts
-    if (body.classList.contains(sidebarFolded)) {
+    if (document.body.classList.contains(sidebarFolded)) {
       setIsSidebarFolded(true);
     }
   }, []);
 
   useEffect(() => {
-    // Set the class when isSidebarFolded changes
     if (isSidebarFolded) {
       document.body.classList.add("sidebar-folded");
     } else {
@@ -184,17 +179,19 @@ const [isInductionOpen, setIsInductionOpen] = useState(false);   // Induction
   const navLinkClass = ({ isActive }) =>
     `nav-link newNav ${isActive ? "active" : ""}`;
 
-  const textStyle = {
-    fontSize: "15px",
-    fontWeight: "500",
-    fontFamily: "Segoe UI, sans-serif",
-  };
-
   return (
     <div>
       <nav className="sidebar">
         <div className="sidebar-header" style={{ backgroundColor: "#66d1d1" }}>
-          <a href="#" className="sidebar-brand text-black" style={{ ...textStyle, fontSize: "18px", fontWeight: "600" }}>
+          <a
+            href="#"
+            className="sidebar-brand text-black"
+            style={{
+              fontSize: "18px",
+              fontWeight: "600",
+              fontFamily: "Segoe UI, sans-serif",
+            }}
+          >
             KONNECT
           </a>
           <div
@@ -217,86 +214,78 @@ const [isInductionOpen, setIsInductionOpen] = useState(false);   // Induction
           >
             {getRole === "superadmin" ? (
               <ul className="nav" style={{ backgroundColor: "#66d1d1" }}>
-                <li className="nav-item">
+                <li className="nav-item mb-1">
                   <NavLink to={`/${orgName}/dashboard`} className={navLinkClass}>
-                    <Icon.Home className="link-icon" color="black" />
-                    <span className="link-title text-black" style={textStyle}>Dashboard</span>
+                    <Icon.Home className="me-2" color="black" />
+                    <span className="fw-medium text-black">Dashboard</span>
                   </NavLink>
                 </li>
-                <li className="nav-item">
+                <li className="nav-item mb-1">
                   <NavLink to="/create-org" className={navLinkClass}>
-                    <Icon.PlusCircle className="link-icon" color="black" />
-                    <span className="link-title text-black" style={textStyle}>Create a new Organization</span>
+                    <Icon.PlusCircle className="me-2" color="black" />
+                    <span className="fw-medium text-black">Create a new Organization</span>
                   </NavLink>
                 </li>
-                <li className="nav-item">
+                <li className="nav-item mb-1">
                   <NavLink to="/manage-org" className={navLinkClass}>
-                    <Icon.Users className="link-icon" color="black" />
-                    <span className="link-title text-black" style={textStyle}>Organizations Management</span>
+                    <Icon.Users className="me-2" color="black" />
+                    <span className="fw-medium text-black">Organizations Management</span>
                   </NavLink>
                 </li>
-                <li className="nav-item">
+                <li className="nav-item mb-1">
                   <NavLink to="/manage-subs" className={navLinkClass}>
-                    <Icon.DollarSign className="link-icon" color="black" />
-                    <span className="link-title text-black" style={textStyle}>Subscription Management</span>
+                    <Icon.DollarSign className="me-2" color="black" />
+                    <span className="fw-medium text-black">Subscription Management</span>
                   </NavLink>
                 </li>
-                <li className="nav-item">
+                <li className="nav-item mb-1">
                   <NavLink to="/view-subscribers" className={navLinkClass}>
-                    <Icon.BookOpen className="link-icon" color="black" />
-                    <span className="link-title text-black" style={textStyle}>View Subscribers & Plan D..</span>
+                    <Icon.BookOpen className="me-2" color="black" />
+                    <span className="fw-medium text-black">View Subscribers & Plan D..</span>
                   </NavLink>
                 </li>
-                <li className="nav-item">
+                <li className="nav-item mb-1">
                   <NavLink to="/manage-enquire" className={navLinkClass}>
-                    <Icon.MessageCircle className="link-icon" color="black" />
-                    <span className="link-title text-black" style={textStyle}>Enquiry Management</span>
+                    <Icon.MessageCircle className="me-2" color="black" />
+                    <span className="fw-medium text-black">Enquiry Management</span>
                   </NavLink>
                 </li>
-                <li className="nav-item">
+                <li className="nav-item mb-1">
                   <NavLink to="/account-setting" className={navLinkClass}>
-                    <Icon.MessageCircle className="link-icon" color="black" />
-                    <span className="link-title text-black" style={textStyle}>Account Setting</span>
+                    <Icon.Settings className="me-2" color="black" />
+                    <span className="fw-medium text-black">Account Setting</span>
                   </NavLink>
                 </li>
               </ul>
-            ) :
-              <ul className="nav" style={{ backgroundColor: "#66d1d1" }}>
-                {/* Dashboard */}
-                <li className="nav-item">
+            ) : (
+              <ul className="nav flex-column" style={{ backgroundColor: "#66d1d1", padding: "10px" }}>
+                <li className="nav-item mb-1">
                   <NavLink to="/organization-dashboard" className={navLinkClass}>
-                    <Icon.Home className="link-icon" color="black" />
-                    <span className="link-title text-black" style={textStyle}>Dashboard</span>
+                    <Icon.Home className="me-2" color="black" />
+                    <span className="fw-medium text-black">Dashboard</span>
                   </NavLink>
                 </li>
 
                 {/* Prequalification Dropdown */}
-                <li className="nav-item has-submenu">
+                <li className="nav-item has-submenu mb-1">
                   <div
-                    className="nav-link"
+                    className="nav-link d-flex justify-content-between align-items-center"
                     onClick={() => setIsSubmenuOpen(!isSubmenuOpen)}
-                    style={{
-                      cursor: "pointer",
-                      padding: "10px 16px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between"
-                    }}
+                    style={{ cursor: "pointer" }}
                   >
                     <div className="d-flex align-items-center">
-                      <Icon.File className="link-icon me-2" color="black" />
-                      <span className="link-title text-black">Prequalification</span>
+                      <Icon.File className="me-2" color="black" />
+                      <span className="fw-medium text-black">Prequalification</span>
                     </div>
-                    <span className="dropdown-arrow">{isSubmenuOpen ? "▾" : "▸"}</span>
+                    <span>{isSubmenuOpen ? "▾" : "▸"}</span>
                   </div>
-
                   {isSubmenuOpen && (
-                    <ul className="submenu">
-                      <li>
+                    <ul className="submenu list-unstyled">
+                      <li className="mb-1">
                         <NavLink
                           to="/invite-user"
                           className={({ isActive }) =>
-                            `submenu-link${isActive ? " active" : ""}`
+                            `submenu-link fw-medium ${isActive ? "text-white bg-dark px-2 py-1 rounded" : "text-black"}`
                           }
                         >
                           Manage Forms
@@ -306,7 +295,7 @@ const [isInductionOpen, setIsInductionOpen] = useState(false);   // Induction
                         <NavLink
                           to="/invite-history"
                           className={({ isActive }) =>
-                            `submenu-link${isActive ? " active" : ""}`
+                            `submenu-link fw-medium ${isActive ? "text-white bg-dark px-2 py-1 rounded" : "text-black"}`
                           }
                         >
                           Invite History
@@ -317,32 +306,25 @@ const [isInductionOpen, setIsInductionOpen] = useState(false);   // Induction
                 </li>
 
                 {/* Induction Dropdown */}
-                <li className="nav-item has-submenu">
+                <li className="nav-item has-submenu mb-1">
                   <div
-                    className="nav-link"
+                    className="nav-link d-flex justify-content-between align-items-center"
                     onClick={() => setIsInductionOpen(!isInductionOpen)}
-                    style={{
-                      cursor: "pointer",
-                      padding: "10px 16px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between"
-                    }}
+                    style={{ cursor: "pointer" }}
                   >
                     <div className="d-flex align-items-center">
-                      <Icon.BookOpen className="link-icon me-2" color="black" />
-                      <span className="link-title text-black">Induction</span>
+                      <Icon.BookOpen className="me-2" color="black" />
+                      <span className="fw-medium text-black">Induction</span>
                     </div>
-                    <span className="dropdown-arrow">{isInductionOpen ? "▾" : "▸"}</span>
+                    <span>{isInductionOpen ? "▾" : "▸"}</span>
                   </div>
-
                   {isInductionOpen && (
-                    <ul className="submenu">
-                      <li>
+                    <ul className="submenu list-unstyled">
+                      <li className="mb-1">
                         <NavLink
-                          to="/induction-search"
+                          to="/inductions-search"
                           className={({ isActive }) =>
-                            `submenu-link${isActive ? " active" : ""}`
+                            `submenu-link fw-medium ${isActive ? "text-white bg-dark px-2 py-1 rounded" : "text-black"}`
                           }
                         >
                           Induction Search
@@ -352,7 +334,7 @@ const [isInductionOpen, setIsInductionOpen] = useState(false);   // Induction
                         <NavLink
                           to="/inductions-link"
                           className={({ isActive }) =>
-                            `submenu-link${isActive ? " active" : ""}`
+                            `submenu-link fw-medium ${isActive ? "text-white bg-dark px-2 py-1 rounded" : "text-black"}`
                           }
                         >
                           Induction Link
@@ -362,9 +344,7 @@ const [isInductionOpen, setIsInductionOpen] = useState(false);   // Induction
                   )}
                 </li>
               </ul>
-
-
-            }
+            )}
           </div>
         </PerfectScrollbar>
       </nav>
