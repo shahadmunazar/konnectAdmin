@@ -2249,7 +2249,7 @@ const InductionsCredentials = () => {
 
 
         try {
-            const response = await fetch('http://localhost:5000/api/orginazation/upload-contractor-documents', {
+            const response = await fetch(`${BASE_URL}/api/orginazation/upload-contractor-documents`, {
                 method: 'POST',
                 body: formData,
             });

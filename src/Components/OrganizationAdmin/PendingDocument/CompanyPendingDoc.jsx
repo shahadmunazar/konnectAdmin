@@ -2,6 +2,7 @@
 import React, { useState,useEffect } from 'react';
 import { Modal, Button, Form, Row, Col, Table, Pagination } from 'react-bootstrap';
 import Layout from '../../Layout/Layout';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const mockData = [
     {
@@ -133,7 +134,7 @@ function CompanyPendingDoc() {
     
     try {
       const response = await fetch(
-        `http://localhost:5000/api/orginazation/get-all-documents-contractor?induction_type=contractor_admin`,
+        `${BASE_URL}/api/orginazation/get-all-documents-contractor?induction_type=contractor_admin`,
         {
           method: 'GET',
           headers: {

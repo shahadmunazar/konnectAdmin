@@ -109,6 +109,7 @@
 import { Button } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';
 import logo from '../../../assets/logoRR.png';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const InductionInfo = () => {
     const [agreed, setAgreed] = useState(false);
@@ -122,7 +123,7 @@ const InductionInfo = () => {
         setError(null);
 
         try {
-            const response = await fetch(`http://localhost:5000/api/orginazation/get-invitation-org-id?invite_token=${token}`, {
+            const response = await fetch(`${BASE_URL}/api/orginazation/get-invitation-org-id?invite_token=${token}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
