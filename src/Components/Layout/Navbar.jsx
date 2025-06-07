@@ -140,6 +140,7 @@ export default function Navbar() {
   const [isSidebarFolded, setIsSidebarFolded] = useState(true);
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false);
   const [isInductionOpen, setIsInductionOpen] = useState(false);
+  const [isPending, setIsPending] = useState(false);
 
   const orgName = "superadmin";
 
@@ -338,6 +339,44 @@ export default function Navbar() {
                           }
                         >
                           Induction Link
+                        </NavLink>
+                      </li>
+                    </ul>
+                  )}
+                </li>
+                {/* Induction Dropdown */}
+                <li className="nav-item has-submenu mb-1">
+                  <div
+                    className="nav-link d-flex justify-content-between align-items-center"
+                    onClick={() => setIsPending(!isPending)}
+                    style={{ cursor: "pointer" }}
+                  >
+                    <div className="d-flex align-items-center">
+                      <Icon.BookOpen className="me-2" color="black" />
+                      <span className="fw-medium text-black">Pending Documents</span>
+                    </div>
+                    <span>{isPending ? "▾" : "▸"}</span>
+                  </div>
+                  {isPending && (
+                    <ul className="submenu list-unstyled">
+                      <li className="mb-1">
+                        <NavLink
+                          to="/company-pending-doc"
+                          className={({ isActive }) =>
+                            `submenu-link fw-medium ${isActive ? "text-white bg-dark px-2 py-1 rounded" : "text-black"}`
+                          }
+                        >
+                          Company Documents
+                        </NavLink>
+                      </li>
+                      <li>
+                        <NavLink
+                          to="/worker-pending-doc"
+                          className={({ isActive }) =>
+                            `submenu-link fw-medium ${isActive ? "text-white bg-dark px-2 py-1 rounded" : "text-black"}`
+                          }
+                        >
+                          Worker Documents
                         </NavLink>
                       </li>
                     </ul>

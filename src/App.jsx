@@ -30,6 +30,8 @@ import InductionSearch from "./Components/OrganizationAdmin/OrgSendInduction/Ind
 
 import { Routes, Route } from "react-router-dom";
 import ContractorForm from "./Components/OrganizationAdmin/ContractorForm/index";
+import WorkerPendingDoc from "./Components/OrganizationAdmin/PendingDocument/WorkerPendingDoc";
+import CompanyPendingDoc from "./Components/OrganizationAdmin/PendingDocument/CompanyPendingDoc";
 
 // import axios from "axios";
 
@@ -83,6 +85,8 @@ function App() {
         <Route path="/inductions-finish" element={<FinishInduction/>} />
         <Route path="/inductions-link" element={<SendInduction/>} />
         <Route path="/inductions-search" element={<InductionSearch/>} />
+        <Route path="/worker-pending-doc" element={<WorkerPendingDoc/>} />
+        <Route path="/company-pending-doc" element={<CompanyPendingDoc/>} />
       </Routes>
     </div>
   );

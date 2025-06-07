@@ -256,6 +256,7 @@ const InviteUser = () => {
     //         return false;
     //     }
     // };
+
     const handleApprove = async (reqId) => {
         try {
             const token = localStorage.getItem('token');
