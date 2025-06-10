@@ -17,7 +17,7 @@ export default function Topbar() {
     try {
       if (token) {
         const res = await axios.post(
-          `${BASE_URL}/api/superadmin/superadmin-logout`,
+          `${BASE_URL}/api/logout-for-all`,
           {}, // empty body
           {
             headers: {
@@ -37,7 +37,6 @@ export default function Topbar() {
     } catch (error) {
       console.error("Logout error:", error);
     }
-
   };
 
   useEffect(() => {

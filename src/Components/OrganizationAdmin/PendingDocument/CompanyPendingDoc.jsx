@@ -1,5 +1,5 @@
 
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form, Row, Col, Table, Pagination } from 'react-bootstrap';
 import Layout from '../../Layout/Layout';
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -99,14 +99,14 @@ function CompanyPendingDoc() {
         currentPage * itemsPerPage
     );
 
-    const handleRowClick = (doc) => setSelectedDoc(doc);    
+    const handleRowClick = (doc) => setSelectedDoc(doc);
     const handleClose = () => setSelectedDoc(null);
 
     const handlePageChange = (page) => {
         if (page >= 1 && page <= totalPages) {
             setCurrentPage(page);
         }
-    };  
+    };
 
     const handleSearchClear = () => {
         setSearch('');
@@ -127,36 +127,36 @@ function CompanyPendingDoc() {
         );
     }
 
-  useEffect(() => {
-  const fetchDocuments = async () => {
-    const token = localStorage.getItem("token");
-    console.log("Token hai kya:", token);
-    
-    try {
-      const response = await fetch(
-        `${BASE_URL}/api/orginazation/get-all-documents-contractor?induction_type=contractor_admin`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    useEffect(() => {
+        const fetchDocuments = async () => {
+            const token = localStorage.getItem("token");
+            console.log("Token hai kya:", token);
 
-      const result = await response.json();
-      if (result.success) {
-        setMockData(result.data);
-      } else {
-        console.error("Failed to load documents:", result.message);
-      }
-    } catch (error) {
-      console.error("API Error:", error);
-    }
-  };
+            try {
+                const response = await fetch(
+                    `${BASE_URL}/api/orginazation/get-all-documents-contractor`,
+                    {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
 
-  fetchDocuments();
-}, []);
+                const result = await response.json();
+                if (result.success) {
+                    setMockData(result.data);
+                } else {
+                    console.error("Failed to load documents:", result.message);
+                }
+            } catch (error) {
+                console.error("API Error:", error);
+            }
+        };
+
+        fetchDocuments();
+    }, []);
 
 
     return (
@@ -190,7 +190,7 @@ function CompanyPendingDoc() {
                     </Button>
                 </div>
 
-                  <Table hover bordered responsive>
+                <Table hover bordered responsive>
                     <thead>
                         <tr>
                             <th>Contractor</th>
@@ -205,12 +205,12 @@ function CompanyPendingDoc() {
                         {paginatedData.length > 0 ? (
                             paginatedData.map((doc) => (
                                 <tr key={doc.id} onClick={() => handleRowClick(doc)} style={{ cursor: 'pointer' }}>
-                                    <td>{doc.organization_name}</td>
-                                    <td>{doc.first_name} {doc.last_name}</td>
-                                    <td>{doc.document_type.replace(/_/g, ' ')}</td>
+                                    <td>{doc.contractor_company}</td>
+                                    <td>{doc.contractor_name}</td>
+                                    <td>{doc.type}</td>
                                     <td></td>
-                                    <td>{doc.organization_name + " - "+   doc.document_name}</td>
-                                    <td>{doc.issue_date}</td>
+                                    <td>{doc.contractor_company + " - " + doc.documentName}</td>
+                                    <td>{doc.issueDate}</td>
                                 </tr>
                             ))
                         ) : (
@@ -265,7 +265,7 @@ function CompanyPendingDoc() {
                                             Contractor
                                         </Form.Label>
                                         <Col sm={8}>
-                                            <Form.Control value={selectedDoc ? `${selectedDoc.first_name} ${selectedDoc.last_name}` : ''}disabled />
+                                            <Form.Control value={selectedDoc ? `${selectedDoc.contractor_name}` : ''} disabled />
                                         </Col>
                                     </Form.Group>
 
@@ -280,7 +280,7 @@ function CompanyPendingDoc() {
 
                                     <Form.Group as={Row} className="mb-2 align-items-center">
                                         <Form.Label column sm={4} className="text-end">
-                                            Entity Description	
+                                            Entity Description
                                         </Form.Label>
                                         <Col sm={8}>
                                             <Form.Control value={selectedDoc?.state} disabled />
@@ -342,7 +342,7 @@ function CompanyPendingDoc() {
                                     </Form.Group>
                                     <Form.Group as={Row} className="mb-2 align-items-center">
                                         <Form.Label column sm={4} className="text-end">
-                                           Filename
+                                            Filename
                                         </Form.Label>
                                         <Col sm={8}>
                                             <Form.Control value={selectedDoc?.expiry_date} disabled />

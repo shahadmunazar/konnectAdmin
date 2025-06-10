@@ -109,7 +109,7 @@ function ContractorDetailList({ onStartNewForm }) {
   // Delete handler
   const handleDelete = async (contractorId) => {
     if (!window.confirm("Are you sure you want to delete this contractor?")) return;
-    
+
     try {
       const res = await fetch(`${BASE_URL}/api/orginazation/delete-contractor-records`, {
         method: 'DELETE',
@@ -117,11 +117,11 @@ function ContractorDetailList({ onStartNewForm }) {
         body: JSON.stringify({ contractor_id: contractorId }),
       });
       const data = await res.json();
-     
+
       if (data.status === 200) {
         // Immediately update local state
         setContractors(prevContractors => prevContractors.filter(c => c.id !== contractorId));
-        
+
         // Then fetch to ensure consistency with server
         setTimeout(() => {
           fetchContractors();
@@ -273,62 +273,62 @@ function ContractorDetailList({ onStartNewForm }) {
               contractors.map((contractor, idx) => {
                 return (
                   <div key={contractor.id}>
-                   
-                   
-                       <div style={{ display: 'flex', alignItems: 'center', fontWeight: 600, fontSize: 18, color: '#222', padding: '0 18px', margin: 0, height: '100%' }}>
-                       {contractor.contractor_company_name || 'Unnamed Contractor'}
-                     </div>
-                      <div key={contractor.id} className="contractor-card" style={cardStyle}>
-                        <div className="contractor-cell" style={cellStyle}>
-                          <span className="cdl-label">Initial application</span>
-                          <span className="cdl-value" style={valueStyle}>{contractor.id || '-'}</span>
-                        </div>
-                        <div className="contractor-cell" style={cellStyle}>
-                          <span className="cdl-label">ABN</span>
-                          <span className="cdl-value" style={valueStyle}>{contractor.abn_number || '-'}</span>
-                        </div>
-                        <div className="contractor-cell" style={cellStyle}>
-                          <span className="cdl-label">Most Recent Action</span>
-                          <span className="cdl-value" style={valueStyle}>{contractor.lastUpdatedAgo || '-'}</span>
-                        </div>
-                        <div className="contractor-cell" style={{ ...cellStyle, ...statusBox(contractor.formStatus) }}>
-                          <span className="cdl-status-label">Status</span>
-                          <span className="cdl-status-box" style={statusBox(contractor.formStatus)}>
-                          {contractor.formStatus === "incomplete" ? `Incomplete - page ${contractor.incompletePage}` || 'pending' : contractor.formStatus === "complete" ? "submitted"  :  contractor.formStatus}
-                          </span>
-                        </div>
-                        <div className="contractor-cell" style={statusCell}>
-                          {contractor.formStatus === "incomplete" ? (
-                            <div style={actionSection}>
-                              <button 
-                                className="cdl-action-btn continue-btn" 
-                                style={actionBtn('#4ecdc4')}
-                                onClick={() => {
-                                  onStartNewForm({
-                                    isNewForm: false,
-                                    contractorId: contractor.id,
-                                    incompletePage: contractor.incompletePage,
-                                    contractorData: contractor
-                                  });
-                                }}
-                              >
-                                Continue
-                              </button>
-                              <button
-                                className="cdl-action-btn delete-btn"
-                                style={actionBtn('#36a2b6')}
-                                onClick={() => handleDelete(contractor.id)}
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          ) : (
-                            <span className="cdl-note" style={noteStyle}>
-                              {contractor.formStatus === "complete" ? "Wait For your administrator" : contractor.formStatus}
-                            </span>
-                          )}
-                        </div>
+
+
+                    <div style={{ display: 'flex', alignItems: 'center', fontWeight: 600, fontSize: 18, color: '#222', padding: '0 18px', margin: 0, height: '100%' }}>
+                      {contractor.contractor_company_name || 'Unnamed Contractor'}
+                    </div>
+                    <div key={contractor.id} className="contractor-card" style={cardStyle}>
+                      <div className="contractor-cell" style={cellStyle}>
+                        <span className="cdl-label">Initial application</span>
+                        <span className="cdl-value" style={valueStyle}>{contractor.id || '-'}</span>
                       </div>
+                      <div className="contractor-cell" style={cellStyle}>
+                        <span className="cdl-label">ABN</span>
+                        <span className="cdl-value" style={valueStyle}>{contractor.abn_number || '-'}</span>
+                      </div>
+                      <div className="contractor-cell" style={cellStyle}>
+                        <span className="cdl-label">Most Recent Action</span>
+                        <span className="cdl-value" style={valueStyle}>{contractor.lastUpdatedAgo || '-'}</span>
+                      </div>
+                      <div className="contractor-cell" style={{ ...cellStyle, ...statusBox(contractor.formStatus) }}>
+                        <span className="cdl-status-label">Status</span>
+                        <span className="cdl-status-box" style={statusBox(contractor.formStatus)}>
+                          {contractor.formStatus === "incomplete" ? `Incomplete - page ${contractor.incompletePage}` || 'pending' : contractor.formStatus === "complete" ? "submitted" : contractor.formStatus}
+                        </span>
+                      </div>
+                      <div className="contractor-cell" style={statusCell}>
+                        {contractor.formStatus === "incomplete" ? (
+                          <div style={actionSection}>
+                            <button
+                              className="cdl-action-btn continue-btn"
+                              style={actionBtn('#4ecdc4')}
+                              onClick={() => {
+                                onStartNewForm({
+                                  isNewForm: false,
+                                  contractorId: contractor.id,
+                                  incompletePage: contractor.incompletePage,
+                                  contractorData: contractor
+                                });
+                              }}
+                            >
+                              Continue
+                            </button>
+                            <button
+                              className="cdl-action-btn delete-btn"
+                              style={actionBtn('#36a2b6')}
+                              onClick={() => handleDelete(contractor.id)}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="cdl-note" style={noteStyle}>
+                            {contractor.formStatus === "complete" ? "Wait For your administrator" : contractor.formStatus}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 );
               })

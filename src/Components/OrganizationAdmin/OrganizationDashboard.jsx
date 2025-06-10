@@ -45,7 +45,6 @@ const OrganizationDashboard = () => {
     <Layout>
       <div className="container-fluid mt-4">
         <h3 className="mb-4">Operational Dashboard</h3>
-
         {/* KPI Cards */}
         <div className="row g-4 mb-4">
           {kpiCards.map((card, index) => {

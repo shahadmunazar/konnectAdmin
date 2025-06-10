@@ -12,8 +12,6 @@ const ContractorVerify = ({ email }) => {
   const [success, setSuccess] = useState(null);
   const navigate = useNavigate();
 
-  
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const isValid = /^\d{8}$/.test(passcode);

@@ -1,8 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Button, Modal } from 'react-bootstrap';
 import Select from 'react-select';
 import Layout from '../../Layout/Layout';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const SendInduction = () => {
   const [selectedOption, setSelectedOption] = useState('specific');
@@ -11,12 +12,48 @@ const SendInduction = () => {
   const [customEmails, setCustomEmails] = useState([]);
   const [additionalComments, setAdditionalComments] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [contractorOptions, setContractorOptions] = useState([]);
 
-  const contractorOptions = [
-    { value: 'abril', label: 'ABRIL RESTORATIONS PTY LTD', email: 'info@abril.com.au' },
-    { value: 'adcare', label: 'ADCARE PTY LTD', email: 'contact@adcare.com' },
-    { value: 'allstyle', label: 'ALL-Style DOORS PTY LTD', email: 'support@allstyle.com' },
-  ];
+  // const contractorOptions = [
+  //   { value: 'abril', label: 'ABRIL RESTORATIONS PTY LTD', email: 'info@abril.com.au' },
+  //   { value: 'adcare', label: 'ADCARE PTY LTD', email: 'contact@adcare.com' },
+  //   { value: 'allstyle', label: 'ALL-Style DOORS PTY LTD', email: 'support@allstyle.com' },
+  // ];
+
+  const GetAllContractors = async () => {
+    try {
+      const token = localStorage.getItem('token'); // or however you store it
+
+      const response = await fetch(`${BASE_URL}/api/orginazation/all-contractor-admins`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // sending token here
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      const options = data.map(contractor => ({
+        value: contractor.id,
+        label: contractor.name,
+        email: contractor.email || '',
+      }));
+
+      setContractorOptions(options);
+    } catch (error) {
+      console.error('Error fetching contractors:', error);
+    }
+  };
+
+  useEffect(() => {
+    GetAllContractors();
+  }, []);
+
 
   const handleContractorChange = (selected) => {
     setSelectedContractor(selected);

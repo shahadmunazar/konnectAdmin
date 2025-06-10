@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, Row, Col, Modal, Card } from "react-bootstrap";
+import { Form, Button, Row, Col, Modal, Card ,Table} from "react-bootstrap";
 import Layout from '../Layout/Layout';
 import { useNavigate } from 'react-router-dom';
 import { FaFilePdf } from 'react-icons/fa'
@@ -30,6 +30,9 @@ const InviteUser = () => {
     const [comments, setComments] = useState("");
     const [bcc, setBcc] = useState("");
     const [showInductionModal, setShowInductionModal] = useState(false);
+    const [showEmailModal, setShowEmailModal] = useState(false);
+    const [showChangeHistoryModal, setShowChangeHistoryModal] = useState(false);
+
     const [thisId, setThisId] = useState("");
 
     const handleSearch = () => {
@@ -132,7 +135,6 @@ const InviteUser = () => {
     const tabList = ["Details", "Submission", "Revision History", "Comments"];
 
     const getDetails = async (id) => {
-
         console.log("Fetching details for ID:#####", id);
         try {
             setThisId(id)
@@ -744,8 +746,8 @@ const InviteUser = () => {
                 </div>
 
                 <div className="d-flex justify-content-end mt-4 mb-3 flex-wrap px-4" style={{ gap: '0.5rem' }}>
-                    <Button variant="secondary">Change E-mail Address</Button>
-                    <Button variant="secondary">View Change History</Button>
+                    <Button variant="secondary" onClick={() => setShowEmailModal(true)}>Change E-mail Address</Button>
+                    <Button variant="secondary"  onClick={() => setShowChangeHistoryModal(true)}>View Change History</Button>
                     <Button variant="secondary">Export to PDF</Button>
                     <Button variant="primary">Save</Button>
                     <Button variant="warning">Pause</Button>
@@ -902,6 +904,63 @@ const InviteUser = () => {
                         <Button variant="primary" onClick={() => handleSend(selectedForm?.id)}>
                             Send Email
                         </Button>
+                    </Modal.Footer>
+                </Modal>
+                <Modal show={showEmailModal} onHide={() => setShowEmailModal(false)} centered>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Update Contractor's Email Address</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form>
+                            <Form.Group className="mb-3">
+                                <Form.Label>Current e-mail address:</Form.Label>
+                                <Form.Control type="email" value={selectedForm?.Email_Address} disabled />
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Label>New e-mail address:</Form.Label>
+                                <Form.Control type="email" placeholder="Enter new e-mail" />
+                            </Form.Group>
+                        </Form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => setShowEmailModal(false)}>
+                            Cancel
+                        </Button>
+                        <Button variant="primary">
+                            OK
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+                <Modal show={showChangeHistoryModal} onHide={() => setShowChangeHistoryModal(false)} size="lg" centered>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Change History</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Table striped bordered hover responsive>
+                            <thead>
+                                <tr>
+                                    <th>Actioned By</th>
+                                    <th>Date/Time</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Guest Account</td>
+                                    <td>14-May-2025 21:05</td>
+                                    <td>Changed status to: Submitted</td>
+                                </tr>
+                                <tr>
+                                    <td>avdeshy213@gmail.com</td>
+                                    <td>07-May-2025 17:20</td>
+                                    <td>Changed status to: In progress (renewal)</td>
+                                </tr>
+                            </tbody>
+                        </Table>
+                        <div className="text-muted">Displaying records 1 to 2 of 2</div>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="secondary" onClick={() => setShowChangeHistoryModal(false)}>Close</Button>
                     </Modal.Footer>
                 </Modal>
             </Modal>
