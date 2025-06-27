@@ -1,0 +1,44 @@
+.worker-filter-option{
+ width: 265px;
+ height: 45px;
+ padding: 6px 14px;
+ border: 1px solid rgb(227, 225, 225);
+}
+.worker-filter-name{
+    width: 220px;
+    height: 45px;
+    border: 1px solid rgb(227, 225, 225);
+}
+.worker-filter-status{
+    width: 100px;
+    padding: 6px 14px;
+    height: 45px;
+     border: 1px solid rgb(227, 225, 225);
+}
+/* worker detail table css */
+.worker-detail-td{
+    width: 100%;
+    padding: 18px 0px;
+    display: inline-block;
+}
+.worker-detail-th{
+    width: 100%;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+.worker-detail-row{
+    border-bottom: 1px solid rgb(234, 232, 232);
+    border-left: 3px solid #fe8e93;
+    display: table;
+    width: 100%;
+}
+.worker-pin{
+    color:#fe8e93
+}
+.table-body{
+    border-top: 1px solid tomato;
+    display: block;
+    max-height: 153px;
+    width: 100%;
+    overflow-y: scroll;
+}

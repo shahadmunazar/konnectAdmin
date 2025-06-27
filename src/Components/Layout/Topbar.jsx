@@ -39,11 +39,11 @@ export default function Topbar() {
     }
   };
 
-  useEffect(() => {
-    if (!token) {
-      navigate("/user/login");
-    }
-  }, [token, navigate]);
+  // useEffect(() => {
+  //   if (!token) {
+  //     navigate("/user/login");
+  //   }
+  // }, [token, navigate]);
 
   return (
     <nav className="navbar">

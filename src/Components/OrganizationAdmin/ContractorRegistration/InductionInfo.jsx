@@ -105,6 +105,7 @@
     // };
 
     // export default InductionInfo;
+    
     import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { useParams, useNavigate } from 'react-router-dom';

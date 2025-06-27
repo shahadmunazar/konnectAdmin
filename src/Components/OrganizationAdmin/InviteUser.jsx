@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Button, Row, Col, Modal, Card ,Table} from "react-bootstrap";
+import { Form, Button, Row, Col, Modal, Card, Table } from "react-bootstrap";
 import Layout from '../Layout/Layout';
 import { useNavigate } from 'react-router-dom';
 import { FaFilePdf } from 'react-icons/fa'
@@ -435,7 +435,7 @@ const InviteUser = () => {
                                 <td>{item.company_representative_first_name}</td>
                                 <td>{item.company_representative_last_name}</td>
                                 <td>{item.state}</td>
-                                <td>{item.status}</td>
+                                <td className='text-success'>{item.submission_status}</td>
                                 <td>{new Date(item.createdAt).toLocaleDateString()}</td>
                             </tr>
                         ))}
@@ -747,7 +747,7 @@ const InviteUser = () => {
 
                 <div className="d-flex justify-content-end mt-4 mb-3 flex-wrap px-4" style={{ gap: '0.5rem' }}>
                     <Button variant="secondary" onClick={() => setShowEmailModal(true)}>Change E-mail Address</Button>
-                    <Button variant="secondary"  onClick={() => setShowChangeHistoryModal(true)}>View Change History</Button>
+                    <Button variant="secondary" onClick={() => setShowChangeHistoryModal(true)}>View Change History</Button>
                     <Button variant="secondary">Export to PDF</Button>
                     <Button variant="primary">Save</Button>
                     <Button variant="warning">Pause</Button>

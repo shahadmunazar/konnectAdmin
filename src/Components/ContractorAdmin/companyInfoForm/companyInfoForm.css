@@ -1,0 +1,28 @@
+/* CompanyInfoForm.css */
+.custom-tabs .nav-link {
+  color: #000;
+  font-weight: 500;
+  border: none;
+  border-bottom: 2px solid transparent;
+}
+
+.custom-tabs .nav-link.active {
+  color: #f88e1d; /* Orange text */
+  border-bottom: 2px solid #f88e1d;
+  background-color: transparent;
+}
+
+.bg-light[disabled], .form-control[disabled] {
+  background-color: #e9ecef !important;
+  opacity: 1;
+  cursor: not-allowed;
+}
+
+button.btn-warning {
+  background-color: #f88e1d;
+  border: none;
+}
+
+button.btn-warning:hover {
+  background-color: #da7d16;
+}

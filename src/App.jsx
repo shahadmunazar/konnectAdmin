@@ -33,24 +33,7 @@ import ContractorForm from "./Components/OrganizationAdmin/ContractorForm/index"
 import WorkerPendingDoc from "./Components/OrganizationAdmin/PendingDocument/WorkerPendingDoc";
 import CompanyPendingDoc from "./Components/OrganizationAdmin/PendingDocument/CompanyPendingDoc";
 
-// import axios from "axios";
 
-// axios.defaults.baseURL = "http://localhost:8000";
-// axios.defaults.baseURL = "https://api.visionlanguageexperts.in";
-// axios.defaults.headers.post["Content-Type"] = "application/json";
-// axios.defaults.headers.post["Accept"] = "application/json";
-
-// axios.defaults.headers.get["Content-Type"] = "application/json";
-// axios.defaults.headers.get["Accept"] = "application/json";
-
-// axios.defaults.withCredentials = true;
-
-// axios.interceptors.request.use(function (config) {
-//   const token = localStorage.getItem("auth_token");
-//   config.headers.Authorization = token ? `Bearer ${token}` : "";
-//   // config.headers.common["X-CSRF-Token"] = token;
-//   return config;
-// });
 
 function App() {
   return (

@@ -1,0 +1,97 @@
+/* Common nav link styling */
+.nav-link-custom {
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-weight: 500 !important;
+  padding: 3px 4px !important;
+  display: inline-block;
+  width: 100%;
+  border-radius: 3px;
+  text-align: left;
+}
+.nav-link-custom:hover{
+    background-color: white;
+    color: rgb(59, 83, 242) !important;
+}
+/* Active nav item */
+.active-link {
+  color: rgb(139, 138, 193) !important;
+  font-weight: bold !important;
+  background-color: #f6f6f6;
+}
+/* common classes */
+.lightBorder{
+    border: 1px solid rgb(232, 225, 225);
+    border-radius: 5px;
+}
+.help-slider-button{
+    background-color: rgb(45, 44, 44);
+    color: white;
+    padding: 7px 20px;
+    border-radius: 5px;
+    transition: all;
+    transition-duration: 100ms;
+}
+.header-container{
+    background-color: rgb(57, 99, 249) !important;
+    width: 150px;
+    height: 100vh;
+    transition: all 0.3s ease-in-out !important;
+}
+/* slider visibility set classes */
+.help-slider-visible{
+    transform: translateX(0%);
+}
+.help-slider-novisible{
+    transform: translateX(100%);
+}
+.nav-slider-visible{
+    transform: translateX(0%);
+}
+.nav-slider-novisible{
+    transform: translateX(100%);
+}
+/* slider main classes */
+.help-slider-button:hover{
+    color: chocolate;
+    outline: 4px solid rgb(220, 217, 217);
+    border: none;
+}
+.help-slider{
+    background-color: #f6f6f6;
+    width: 35vw;
+    height: 100vh;
+    border-left: 2px solid rgb(248, 144, 50);
+    transition: all 400ms;
+}
+
+.help-slider-tab{
+    background-color: rgb(80, 90, 234);
+    height:66px;
+    width: 40px;
+    cursor: pointer;
+    position: absolute;
+    left:-42px;
+    top: 7px;
+    font-weight: 500;
+}
+.slider-header{
+    border-bottom:1px solid rgb(204, 198, 198);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.slider-heading{
+    width: 90%;
+    color: rgb(64, 63, 63);
+}
+@media (max-width:900px){
+    .help-slider{
+        width: 80vw;
+    }
+}
+@media (min-width:992px){
+    .header-container{
+        transform: translateX(0%) !important;
+    }
+}

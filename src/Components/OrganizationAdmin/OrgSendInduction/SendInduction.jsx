@@ -14,6 +14,8 @@ const SendInduction = () => {
   const [showModal, setShowModal] = useState(false);
   const [contractorOptions, setContractorOptions] = useState([]);
 
+  console.log("selectedContractor@@@@", selectedContractor);
+
   // const contractorOptions = [
   //   { value: 'abril', label: 'ABRIL RESTORATIONS PTY LTD', email: 'info@abril.com.au' },
   //   { value: 'adcare', label: 'ADCARE PTY LTD', email: 'contact@adcare.com' },
@@ -22,6 +24,7 @@ const SendInduction = () => {
 
   const GetAllContractors = async () => {
     try {
+
       const token = localStorage.getItem('token'); // or however you store it
 
       const response = await fetch(`${BASE_URL}/api/orginazation/all-contractor-admins`, {
@@ -38,10 +41,48 @@ const SendInduction = () => {
 
       const data = await response.json();
 
-      const options = data.map(contractor => ({
-        value: contractor.id,
-        label: contractor.name,
-        email: contractor.email || '',
+      const options = data.data.map(contractor => ({
+        value: contractor.user_id,
+        label: contractor.contractor_company_name,
+        email: contractor.user_email || '',
+      }));
+
+      setContractorOptions(options);
+    } catch (error) {
+      console.error('Error fetching contractors:', error);
+    }
+  };
+
+  const SendInvitation = async () => {
+    try {
+
+      const token = localStorage.getItem('token'); // or however you store it
+
+      const response = await fetch(`${BASE_URL}/api/orginazation/send-invitation-link-all-contractor`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // sending token here
+        },
+        body: JSON.stringify({
+          contractor_id: selectedContractor?.value || '',
+          send_by_user: selectedContractor?.label || '',
+          // send_by_user: "organization_admin",
+          additional_message: additionalComments,
+          worker_email: customEmails
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      const options = data.data.map(contractor => ({
+        value: contractor.user_id,
+        label: contractor.contractor_company_name,
+        email: contractor.user_email || '',
       }));
 
       setContractorOptions(options);
@@ -53,7 +94,6 @@ const SendInduction = () => {
   useEffect(() => {
     GetAllContractors();
   }, []);
-
 
   const handleContractorChange = (selected) => {
     setSelectedContractor(selected);
@@ -198,6 +238,7 @@ const SendInduction = () => {
               variant="primary"
               className="px-4 py-2"
               disabled={selectedOption === 'specific' && (!selectedContractor || customEmails.some(e => !e))}
+              onClick={SendInvitation}
             >
               Send Email
             </Button>

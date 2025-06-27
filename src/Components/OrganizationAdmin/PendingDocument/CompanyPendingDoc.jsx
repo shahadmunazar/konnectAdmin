@@ -81,16 +81,15 @@ function CompanyPendingDoc() {
     const [search, setSearch] = useState('');
     const [selectedDoc, setSelectedDoc] = useState(null);
     const [mockData, setMockData] = useState([]);
-
-    // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 2;
 
-    const filteredData = mockData.filter((d) =>
-        (d.first_name + ' ' + d.last_name).toLowerCase().includes(search.toLowerCase()) ||
-        d.document_type.toLowerCase().includes(search.toLowerCase()) ||
-        d.reference_number.toLowerCase().includes(search.toLowerCase())
+     const filteredData = mockData.filter((d) =>
+        (d.contractor_name || '').toLowerCase().includes(search.toLowerCase()) ||
+        (d.documentName || '').toLowerCase().includes(search.toLowerCase()) ||
+        (d.reference_number || '').toLowerCase().includes(search.toLowerCase())
     );
+
 
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
@@ -210,7 +209,8 @@ function CompanyPendingDoc() {
                                     <td>{doc.type}</td>
                                     <td></td>
                                     <td>{doc.contractor_company + " - " + doc.documentName}</td>
-                                    <td>{doc.issueDate}</td>
+                                    <td>{doc.expiryDate ? new Date(doc.expiryDate).toLocaleDateString() : ''}</td>
+
                                 </tr>
                             ))
                         ) : (
